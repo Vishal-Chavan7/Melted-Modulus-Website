@@ -10,7 +10,7 @@ import slugify from "slugify";
 
 
 const createProduct = asyncHandler(async (req,res)=>{
-    const { name, description, price, images, category, inventoryQuantity, sku, isActive } = req.body;
+    const { name, description, material,price, images, category, inventoryQuantity, sku, isActive } = req.body;
 
     const userId = req.user._id;
 
@@ -40,6 +40,7 @@ const createProduct = asyncHandler(async (req,res)=>{
         name,
         slug: generatedSlug,
         description,
+        material,
         price,
         images,
         category,
