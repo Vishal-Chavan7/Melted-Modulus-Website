@@ -23,6 +23,11 @@ const productSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
+    material:{
+      type: String,
+      required: true,
+      trim: true,
+    },
     price: {
       type: mongoose.Schema.Types.Decimal128,
       required: true,
