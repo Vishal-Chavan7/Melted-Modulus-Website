@@ -21,6 +21,13 @@ const createProductSchema = z.object({
     .min(5,"Description must be at least 5 characters")
     .max(500,"Description must be less than 500 characters"),
 
+    material: z
+    .string()
+    .trim()
+    .min(3,"Material must be at least 3 characters")
+    .max(100,"Material must be less than 100 characters"),
+
+
     price: z
     .coerce
     .number({
@@ -58,5 +65,11 @@ const createProductSchema = z.object({
 
 });
 
-export { createProductSchema };
+
+const updateProductSchema = createProductSchema.partial().refine(
+    (data) => Object.keys(data).length > 0,
+    { message: "At least one field is required" },
+);
+
+export { createProductSchema, updateProductSchema };
 export default createProductSchema;
