@@ -7,6 +7,7 @@ import categoryRouter from './routes/category.route.js';
 import productRouter from './routes/product.route.js';
 import cartRouter from './routes/cart.route.js';
 import checkoutRouter from './routes/checkout.route.js';
+import orderRouter from './routes/order.route.js';
 
 const app = express();
 
@@ -34,6 +35,9 @@ app.use('/api/v1', cartRouter)
 
 // checkout routes
 app.use('/api/v1', checkoutRouter)
+
+// order routes
+app.use('/api/v1', orderRouter)
 
 
 app.use(errorHandler)
