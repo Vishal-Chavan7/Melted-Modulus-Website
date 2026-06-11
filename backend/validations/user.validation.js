@@ -45,4 +45,41 @@ const resetPasswordSchema = z.object({
     .min(6, "Password must be at least 6 characters"),
 });
 
-export { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema };
+const updateUserProfileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(3, "Name must be at least 3 characters")
+    .optional(),
+
+  phone: z
+    .string()
+    .trim()
+    .min(10, "Invalid phone number")
+    .optional(),
+
+  address: z
+    .object({
+      street: z.string().trim().optional(),
+      city: z.string().trim().optional(),
+      state: z.string().trim().optional(),
+      country: z.string().trim().optional(),
+      pincode: z.string().trim().optional(),
+    })
+    .refine(
+      (address) => Object.keys(address).length > 0,
+      { message: "At least one address field is required" },
+    )
+    .optional(),
+}).refine(
+  (data) => Object.keys(data).length > 0,
+  { message: "At least one field is required" },
+);
+
+export {
+  registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  updateUserProfileSchema,
+};

@@ -222,6 +222,37 @@ const changeRefreshToken = asyncHandler(async (req, res) => {
     );
 });
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "User profile fetched successfully"));
+});
+
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const { name, phone, address } = req.body;
+
+  const user = await User.findById(req.user._id).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  user.name = name ?? user.name;
+  user.phone = phone ?? user.phone;
+  if (address) {
+    user.address = {
+      ...user.address?.toObject?.(),
+      ...address,
+    };
+  }
+
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User profile updated successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -229,4 +260,6 @@ export {
   forgotPassword,
   resetPassword,
   changeRefreshToken,
+  getCurrentUser,
+  updateUserProfile,
 };
