@@ -10,6 +10,7 @@ import checkoutRouter from './routes/checkout.route.js';
 import orderRouter from './routes/order.route.js';
 import adminOrderRouter from './routes/adminOrder.route.js';
 import adminUserRouter from './routes/adminUser.route.js';
+import adminDashboardRouter from './routes/adminDashboard.route.js';
 
 const app = express();
 
@@ -46,6 +47,9 @@ app.use('/api/v1', adminOrderRouter)
 
 // admin user routes
 app.use('/api/v1', adminUserRouter)
+
+// admin dashboard routes
+app.use('/api/v1', adminDashboardRouter)
 
 
 app.use(errorHandler)
