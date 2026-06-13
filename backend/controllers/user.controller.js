@@ -57,6 +57,10 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Invalid email or password");
   }
 
+  if (user.isBlocked) {
+    throw new ApiError(403, "Your account has been blocked");
+  }
+
   const isPasswordCorrect = await user.comparePassword(password);
 
   if (!isPasswordCorrect) {
