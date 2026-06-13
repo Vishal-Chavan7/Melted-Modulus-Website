@@ -8,6 +8,8 @@ import productRouter from './routes/product.route.js';
 import cartRouter from './routes/cart.route.js';
 import checkoutRouter from './routes/checkout.route.js';
 import orderRouter from './routes/order.route.js';
+import adminOrderRouter from './routes/adminOrder.route.js';
+import adminUserRouter from './routes/adminUser.route.js';
 
 const app = express();
 
@@ -38,6 +40,12 @@ app.use('/api/v1', checkoutRouter)
 
 // order routes
 app.use('/api/v1', orderRouter)
+
+// admin order routes
+app.use('/api/v1', adminOrderRouter)
+
+// admin user routes
+app.use('/api/v1', adminUserRouter)
 
 
 app.use(errorHandler)
