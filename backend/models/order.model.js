@@ -41,11 +41,19 @@ const orderSchema = new mongoose.Schema(
     },
 
     shippingAddress: {
+      fullName: String,
+      phone: String,
       street: String,
       city: String,
       state: String,
       country: String,
       pincode: String,
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: ["cash_on_delivery", "upi", "card", "net_banking"],
+      required: true,
     },
 
     paymentStatus: {

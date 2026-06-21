@@ -21,4 +21,10 @@ const cartItemSchema = z.object({
 const addToCartSchema = cartItemSchema;
 const updateCartItemQuantitySchema = cartItemSchema;
 
-export { addToCartSchema, updateCartItemQuantitySchema };
+const syncCartSchema = z.object({
+  items: z
+    .array(cartItemSchema)
+    .min(1, "Cart must contain at least one item"),
+});
+
+export { addToCartSchema, updateCartItemQuantitySchema, syncCartSchema };

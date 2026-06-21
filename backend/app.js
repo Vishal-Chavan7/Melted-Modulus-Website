@@ -15,6 +15,7 @@ import adminUserRouter from './routes/adminUser.route.js';
 import adminDashboardRouter from './routes/adminDashboard.route.js';
 import customQuoteRouter from './routes/customQuote.route.js';
 import contactRouter from './routes/contact.route.js';
+import wishlistRouter from './routes/wishlist.route.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,6 +70,9 @@ app.use('/api/v1', customQuoteRouter)
 
 // contact routes
 app.use('/api/v1', contactRouter)
+
+// wishlist routes
+app.use('/api/v1', wishlistRouter)
 
 
 app.use(errorHandler)

@@ -5,7 +5,29 @@ import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import Product from '../models/product.model.js';
 
-// 1. ADD TO CART
+const PRODUCT_FIELDS = "name price images sku inventoryQuantity isActive slug";
+
+const removeInvalidCartItems = async (cart) => {
+  if (!cart?.items?.length) return cart;
+
+  const validItems = [];
+
+  for (const item of cart.items) {
+    const product = await Product.findById(item.product).select("_id isActive inventoryQuantity name");
+    if (product && product.isActive) {
+      validItems.push(item);
+    }
+  }
+
+  if (validItems.length !== cart.items.length) {
+    cart.items = validItems;
+    await cart.save();
+  }
+
+  return cart;
+};
+
+const populateCart = (cart) => cart.populate("items.product", PRODUCT_FIELDS);
 const addToCart = asyncHandler(async (req, res) => {
     const { productId, quantity } = req.body;
     const userId = req.user._id;
@@ -42,7 +64,7 @@ const addToCart = asyncHandler(async (req, res) => {
     }
 
     await cart.save();
-    const populatedCart = await cart.populate("items.product", "name price images sku");
+    const populatedCart = await populateCart(cart);
 
     return res.status(200).json(new ApiResponse(200, populatedCart, "Product added to cart successfully"));
 });
@@ -52,14 +74,16 @@ const getMyCart = asyncHandler(async (req, res) => {
     const userId = req.user._id;
 
     // PRODUCTION OPTIMIZATION: Populate product details automatically on fetch
-    let cart = await Cart.findOne({ user: userId }).populate("items.product", "name price images sku inventoryQuantity isActive");
+    let cart = await Cart.findOne({ user: userId });
     
-    // FIXED: Return an empty structure instead of crashing with a 404 for new users
     if (!cart) {
         return res.status(200).json(new ApiResponse(200, { user: userId, items: [] }, "Cart is empty"));
     }
 
-    return res.status(200).json(new ApiResponse(200, cart, "Cart fetched successfully"));
+    await removeInvalidCartItems(cart);
+    const populatedCart = await populateCart(cart);
+
+    return res.status(200).json(new ApiResponse(200, populatedCart, "Cart fetched successfully"));
 }); 
 
 // 3. UPDATE CART ITEM QUANTITY
@@ -91,7 +115,7 @@ const updateCartItemQuantity = asyncHandler(async (req, res) => {
     cartItem.quantity = quantity;
     await cart.save();
     
-    const populatedCart = await cart.populate("items.product", "name price images sku");
+    const populatedCart = await populateCart(cart);
 
     return res.status(200).json(new ApiResponse(200, populatedCart, "Cart quantity updated successfully"));
 });
@@ -106,16 +130,19 @@ const deleteCartItem = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Cart not found");
     }
 
-    // FIXED: Replaced array filter dead-code with Mongoose atomic subdocument .pull()
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new ApiError(400, "The provided product ID structure is invalid");
+    }
+
     const initialLength = cart.items.length;
-    cart.items.pull({ product: id }); 
+    cart.items = cart.items.filter((item) => item.product.toString() !== id);
 
     if (cart.items.length === initialLength) {
         throw new ApiError(404, "Target product not found inside your cart array");
     }
 
     await cart.save();
-    const populatedCart = await cart.populate("items.product", "name price images sku");
+    const populatedCart = await populateCart(cart);
 
     return res.status(200).json(new ApiResponse(200, populatedCart, "Item removed from cart successfully"));              
 });
@@ -126,7 +153,7 @@ const clearCart = asyncHandler(async (req, res) => {
 
     const cart = await Cart.findOne({ user: userId });
     if (!cart) {
-        throw new ApiError(404, "Cart session not found");
+        return res.status(200).json(new ApiResponse(200, { user: userId, items: [] }, "Cart is already empty"));
     }
 
     cart.items = [];
@@ -135,4 +162,59 @@ const clearCart = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, cart, "Cart cleared successfully"));
 });
 
-export { addToCart, getMyCart, updateCartItemQuantity, deleteCartItem, clearCart };
+// 6. SYNC CART — replace cart with validated items from the client
+const syncCart = asyncHandler(async (req, res) => {
+    const { items } = req.body;
+    const userId = req.user._id;
+
+    if (!Array.isArray(items) || items.length === 0) {
+        throw new ApiError(400, "Your shopping cart is empty");
+    }
+
+    let cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+        cart = await Cart.create({ user: userId, items: [] });
+    }
+
+    const syncedItems = [];
+
+    for (const { productId, quantity } of items) {
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            continue;
+        }
+
+        const product = await Product.findById(productId);
+        if (!product || !product.isActive) {
+            continue;
+        }
+
+        const qty = Number(quantity);
+        if (!Number.isInteger(qty) || qty < 1) {
+            continue;
+        }
+
+        if (product.inventoryQuantity < qty) {
+            throw new ApiError(
+                400,
+                `Only ${product.inventoryQuantity} units of "${product.name}" are available in stock.`
+            );
+        }
+
+        syncedItems.push({ product: productId, quantity: qty });
+    }
+
+    if (syncedItems.length === 0) {
+        throw new ApiError(
+            400,
+            "No valid products in your cart. Please remove outdated items and add products again from the shop."
+        );
+    }
+
+    cart.items = syncedItems;
+    await cart.save();
+
+    const populatedCart = await populateCart(cart);
+    return res.status(200).json(new ApiResponse(200, populatedCart, "Cart synced successfully"));
+});
+
+export { addToCart, getMyCart, updateCartItemQuantity, deleteCartItem, clearCart, syncCart };

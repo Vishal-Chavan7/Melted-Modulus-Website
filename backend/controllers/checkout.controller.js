@@ -8,15 +8,13 @@ import Order from "../models/order.model.js";
 
 const processCheckout = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const { shippingAddress } = req.body;
+  const { shippingAddress, paymentMethod } = req.body;
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const cart = await Cart.findOne({ user: userId })
-      .populate("items.product")
-      .session(session);
+    const cart = await Cart.findOne({ user: userId }).session(session);
 
     if (!cart || cart.items.length === 0) {
       throw new ApiError(400, "Your shopping cart is empty");
@@ -24,12 +22,13 @@ const processCheckout = asyncHandler(async (req, res) => {
 
     let totalAmount = 0;
     const orderItems = [];
+    const validCartItems = [];
 
     for (const cartItem of cart.items) {
-      const product = cartItem.product;
+      const product = await Product.findById(cartItem.product).session(session);
 
       if (!product || !product.isActive) {
-        throw new ApiError(400, "One product is no longer available");
+        continue;
       }
 
       const priceAtPurchase = Number(product.price.toString());
@@ -59,6 +58,22 @@ const processCheckout = asyncHandler(async (req, res) => {
         quantity: cartItem.quantity,
         priceAtPurchase,
       });
+
+      validCartItems.push(cartItem);
+    }
+
+    if (orderItems.length === 0) {
+      cart.items = [];
+      await cart.save({ session });
+      throw new ApiError(
+        400,
+        "No valid products in your cart. Please remove outdated items and add products again from the shop."
+      );
+    }
+
+    if (validCartItems.length !== cart.items.length) {
+      cart.items = validCartItems;
+      await cart.save({ session });
     }
 
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -71,8 +86,9 @@ const processCheckout = asyncHandler(async (req, res) => {
           items: orderItems,
           totalAmount,
           shippingAddress,
+          paymentMethod,
           paymentStatus: "pending",
-          orderStatus: "processing",
+          orderStatus: "pending",
         },
       ],
       { session }
