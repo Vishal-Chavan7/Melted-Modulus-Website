@@ -35,6 +35,7 @@ const createAdmin = async () => {
       existingUser.phone = ADMIN.phone;
       existingUser.role = ADMIN.role;
       existingUser.isBlocked = false;
+      existingUser.isEmailVerified = true;
       await existingUser.save();
 
       console.log("Admin user updated:");
@@ -43,7 +44,10 @@ const createAdmin = async () => {
       return;
     }
 
-    await User.create(ADMIN);
+    await User.create({
+      ...ADMIN,
+      isEmailVerified: true,
+    });
 
     console.log("Admin user created:");
     console.log(`  Email: ${ADMIN.email}`);

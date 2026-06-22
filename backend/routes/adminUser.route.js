@@ -1,6 +1,7 @@
 import express from "express";
 import {
   blockUser,
+  unblockUser,
   deleteUser,
   getAllUsers,
   getUserById,
@@ -26,5 +27,9 @@ router
 router
   .route("/admin/users/:id/block")
   .patch(authMiddleware, authorizeRole("admin"), blockUser);
+
+router
+  .route("/admin/users/:id/unblock")
+  .patch(authMiddleware, authorizeRole("admin"), unblockUser);
 
 export default router;

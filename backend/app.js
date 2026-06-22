@@ -13,6 +13,8 @@ import orderRouter from './routes/order.route.js';
 import adminOrderRouter from './routes/adminOrder.route.js';
 import adminUserRouter from './routes/adminUser.route.js';
 import adminDashboardRouter from './routes/adminDashboard.route.js';
+import adminContactRouter from './routes/adminContact.route.js';
+import adminCustomQuoteRouter from './routes/adminCustomQuote.route.js';
 import customQuoteRouter from './routes/customQuote.route.js';
 import contactRouter from './routes/contact.route.js';
 import wishlistRouter from './routes/wishlist.route.js';
@@ -64,6 +66,12 @@ app.use('/api/v1', adminUserRouter)
 
 // admin dashboard routes
 app.use('/api/v1', adminDashboardRouter)
+
+// admin contact routes
+app.use('/api/v1', adminContactRouter)
+
+// admin custom quote routes
+app.use('/api/v1', adminCustomQuoteRouter)
 
 // custom quote routes
 app.use('/api/v1', customQuoteRouter)

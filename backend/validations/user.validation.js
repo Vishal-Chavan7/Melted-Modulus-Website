@@ -76,10 +76,20 @@ const updateUserProfileSchema = z.object({
   { message: "At least one field is required" },
 );
 
+const verifyEmailSchema = z.object({
+  token: z.string().min(1, "Verification token is required"),
+});
+
+const resendVerificationSchema = z.object({
+  email: z.string().email({ message: "Invalid email" }),
+});
+
 export {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  verifyEmailSchema,
+  resendVerificationSchema,
   updateUserProfileSchema,
 };

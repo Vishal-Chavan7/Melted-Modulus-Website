@@ -4,6 +4,8 @@ import {
     loginUser,
     logoutUser,
     forgotPassword,
+    verifyEmail,
+    resendVerificationEmail,
     resetPassword,
     changeRefreshToken,
     getCurrentUser,
@@ -15,6 +17,8 @@ import {
     loginSchema,
     forgotPasswordSchema,
     resetPasswordSchema,
+    verifyEmailSchema,
+    resendVerificationSchema,
     updateUserProfileSchema,
 } from '../validations/user.validation.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
@@ -24,6 +28,8 @@ const router = express.Router();
 
 router.route('/register').post(validateMiddleware(registerSchema), registerUser);
 router.route('/login').post(validateMiddleware(loginSchema), loginUser);
+router.route('/verify-email').post(validateMiddleware(verifyEmailSchema), verifyEmail);
+router.route('/resend-verification').post(validateMiddleware(resendVerificationSchema), resendVerificationEmail);
 router.route('/logout').post(authMiddleware, logoutUser);
 router.route('/forgot-password').post(validateMiddleware(forgotPasswordSchema), forgotPassword);
 router.route('/reset-password').post(validateMiddleware(resetPasswordSchema), resetPassword);

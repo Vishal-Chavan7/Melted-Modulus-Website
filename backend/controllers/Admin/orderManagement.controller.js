@@ -4,6 +4,7 @@ import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import Order from "../../models/order.model.js";
 import Product from "../../models/product.model.js";
+import { sendOrderStatusEmail } from "../../utils/orderEmailService.js";
 
 const allowedStatusTransitions = {
   pending: ["processing", "cancelled"],
@@ -147,6 +148,12 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     const updatedOrder = await Order.findById(order._id)
       .populate("user", "name email phone")
       .populate("items.product", "name price images sku");
+
+    try {
+      await sendOrderStatusEmail(updatedOrder, orderStatus);
+    } catch (emailError) {
+      console.error(`Order ${orderStatus} email failed:`, emailError.message);
+    }
 
     return res
       .status(200)

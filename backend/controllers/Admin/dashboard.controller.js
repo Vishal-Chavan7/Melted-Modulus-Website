@@ -3,6 +3,8 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import Order from "../../models/order.model.js";
 import Product from "../../models/product.model.js";
 import User from "../../models/user.model.js";
+import Contact from "../../models/contact.model.js";
+import CustomQuote from "../../models/customQuote.model.js";
 
 const getAdminDashboard = asyncHandler(async (req, res) => {
   const [
@@ -20,6 +22,10 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
     deliveredOrders,
     cancelledOrders,
     revenueResult,
+    totalContacts,
+    pendingContacts,
+    totalCustomQuotes,
+    pendingCustomQuotes,
   ] = await Promise.all([
     User.countDocuments({ role: "user" }),
     User.countDocuments({ role: "admin" }),
@@ -48,6 +54,10 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
         },
       },
     ]),
+    Contact.countDocuments(),
+    Contact.countDocuments({ status: "pending" }),
+    CustomQuote.countDocuments(),
+    CustomQuote.countDocuments({ status: "pending" }),
   ]);
 
   const totalRevenue = revenueResult[0]?.totalRevenue || 0;
@@ -79,6 +89,12 @@ const getAdminDashboard = asyncHandler(async (req, res) => {
         },
         revenue: {
           totalRevenue,
+        },
+        inquiries: {
+          totalContacts,
+          pendingContacts,
+          totalCustomQuotes,
+          pendingCustomQuotes,
         },
       },
       "Admin dashboard fetched successfully",

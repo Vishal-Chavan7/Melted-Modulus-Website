@@ -4,6 +4,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { sendResetPasswordEmail } from "../utils/sendEmailService.js";
 
 const cookieOptions = {
   httpOnly: true,
@@ -27,6 +28,7 @@ const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     phone,
+    isEmailVerified: true,
   });
 
   if (!newUser) {
@@ -141,18 +143,40 @@ const forgotPassword = asyncHandler(async (req, res) => {
   user.forgotPasswordTokenExpiry = forgotPasswordTokenExpiry;
   await user.save({ validateBeforeSave: false });
 
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  const forgotPasswordUrl = `${frontendUrl}/reset-password?token=${forgotPasswordToken}`;
+  await sendResetPasswordEmail(user.email, user.name, forgotPasswordToken);
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { resetPasswordUrl: forgotPasswordUrl },
-        "Password reset link generated",
-      ),
-    );
+    .json(new ApiResponse(200, null, "Password reset link sent to your email"));
+});
+
+const verifyEmail = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  const user = await User.findOne({ emailVerificationToken: token });
+
+  if (!user) {
+    throw new ApiError(400, "Invalid or expired verification link");
+  }
+
+  if (user.emailVerificationTokenExpiry < Date.now()) {
+    throw new ApiError(400, "Verification link has expired. Please request a new one.");
+  }
+
+  user.isEmailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationTokenExpiry = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Email verified successfully. You can now sign in."));
+});
+
+const resendVerificationEmail = asyncHandler(async (req, res) => {
+  return res.status(200).json(
+    new ApiResponse(200, null, "Email verification is not required. You can sign in directly."),
+  );
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
@@ -278,6 +302,8 @@ export {
   loginUser,
   logoutUser,
   forgotPassword,
+  verifyEmail,
+  resendVerificationEmail,
   resetPassword,
   changeRefreshToken,
   getCurrentUser,

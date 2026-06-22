@@ -74,4 +74,27 @@ const blockUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, user, "User blocked successfully"));
 });
 
-export { getAllUsers, getUserById, updateUser, deleteUser, blockUser };
+const unblockUser = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const user = await User.findById(id).select("-password -refreshToken");
+
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    if (!user.isBlocked) {
+        return res
+            .status(200)
+            .json(new ApiResponse(200, user, "User is already active"));
+    }
+
+    user.isBlocked = false;
+    await user.save();
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "User unblocked successfully"));
+});
+
+export { getAllUsers, getUserById, updateUser, deleteUser, blockUser, unblockUser };

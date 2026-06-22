@@ -5,6 +5,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
 import Order from "../models/order.model.js";
+import { sendOrderConfirmationEmail } from "../utils/orderEmailService.js";
+import { calculateShippingCharge } from "../utils/shipping.js";
 
 const processCheckout = asyncHandler(async (req, res) => {
   const userId = req.user._id;
@@ -20,7 +22,7 @@ const processCheckout = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Your shopping cart is empty");
     }
 
-    let totalAmount = 0;
+    let subtotalAmount = 0;
     const orderItems = [];
     const validCartItems = [];
 
@@ -32,7 +34,7 @@ const processCheckout = asyncHandler(async (req, res) => {
       }
 
       const priceAtPurchase = Number(product.price.toString());
-      totalAmount += priceAtPurchase * cartItem.quantity;
+      subtotalAmount += priceAtPurchase * cartItem.quantity;
 
       const stockUpdateResult = await Product.updateOne(
         {
@@ -77,6 +79,8 @@ const processCheckout = asyncHandler(async (req, res) => {
     }
 
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const shippingCharge = calculateShippingCharge(subtotalAmount);
+    const totalAmount = subtotalAmount + shippingCharge;
 
     const [order] = await Order.create(
       [
@@ -84,6 +88,8 @@ const processCheckout = asyncHandler(async (req, res) => {
           user: userId,
           orderNumber,
           items: orderItems,
+          subtotalAmount,
+          shippingCharge,
           totalAmount,
           shippingAddress,
           paymentMethod,
@@ -98,6 +104,15 @@ const processCheckout = asyncHandler(async (req, res) => {
     await cart.save({ session });
 
     await session.commitTransaction();
+
+    try {
+      const populatedOrder = await Order.findById(order._id)
+        .populate("user", "name email")
+        .populate("items.product", "name sku");
+      await sendOrderConfirmationEmail(populatedOrder);
+    } catch (emailError) {
+      console.error("Order confirmation email failed:", emailError.message);
+    }
 
     return res.status(201).json(
       new ApiResponse(
