@@ -701,6 +701,53 @@
   font-size: var(--fs-h4);
 }
 
+.checkout-default-address {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  background: var(--clr-surface-light);
+}
+
+.checkout-default-address__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: var(--fw-semibold);
+  color: var(--clr-text-primary);
+  cursor: pointer;
+}
+
+.checkout-default-address__label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--clr-brand);
+  cursor: pointer;
+}
+
+.checkout-default-address__label input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.checkout-default-address__preview,
+.checkout-default-address__hint {
+  margin: var(--space-3) 0 0;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  color: var(--clr-text-secondary);
+}
+
+.checkout-default-address__hint a {
+  color: var(--clr-brand-light);
+  text-decoration: underline;
+}
+
+.checkout-default-address__hint a:hover {
+  color: var(--clr-brand);
+}
+
 .checkout-section .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;

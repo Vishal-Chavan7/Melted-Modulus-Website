@@ -10,7 +10,7 @@ import {
 import { PageHero } from '../components/common/PageHero';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { checkoutApi } from '../services/api';
+import { checkoutApi, userApi } from '../services/api';
 import { formatPrice } from '../utils/helpers';
 import { setAuthRedirect } from '../utils/authRedirect';
 
@@ -50,10 +50,51 @@ const INDIAN_STATES = [
   'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Puducherry',
 ];
 
+const EMPTY_ADDRESS_FIELDS = {
+  fullName: '',
+  phone: '',
+  street: '',
+  city: '',
+  state: 'Maharashtra',
+  country: 'India',
+  pincode: '',
+};
+
+const profileToFormFields = (profile) => ({
+  fullName: profile?.name || '',
+  phone: profile?.phone || '',
+  street: profile?.address?.street || '',
+  city: profile?.address?.city || '',
+  state: profile?.address?.state || 'Maharashtra',
+  country: profile?.address?.country || 'India',
+  pincode: profile?.address?.pincode || '',
+});
+
+const hasSavedAddress = (profile) => {
+  const address = profile?.address;
+  return Boolean(
+    address?.street?.trim() &&
+    address?.city?.trim() &&
+    address?.pincode?.trim(),
+  );
+};
+
+const formatSavedAddress = (profile) => {
+  const address = profile?.address;
+  if (!address) return '';
+
+  return [
+    profile.name,
+    address.street,
+    [address.city, address.state, address.pincode].filter(Boolean).join(', '),
+    address.country,
+  ].filter(Boolean).join(' · ');
+};
+
 export const CheckoutPage = () => {
   const navigate = useNavigate();
   const { items, getTotal, getTotalItems, getShipping, getGrandTotal, clearCart, syncCartForCheckout, canSyncProduct } = useCart();
-  const { isLoggedIn, currentUser, openAuthModal } = useAuth();
+  const { isLoggedIn, currentUser, updateCurrentUser, openAuthModal } = useAuth();
 
   const [paymentMethod, setPaymentMethod] = useState('cash_on_delivery');
   const [status, setStatus] = useState('idle');
@@ -61,15 +102,12 @@ export const CheckoutPage = () => {
   const [orderResult, setOrderResult] = useState(null);
 
   const [form, setForm] = useState({
-    fullName: '',
-    phone: '',
-    street: '',
-    city: '',
-    state: 'Maharashtra',
-    country: 'India',
-    pincode: '',
+    ...EMPTY_ADDRESS_FIELDS,
     notes: '',
   });
+  const [defaultProfile, setDefaultProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [useDefaultAddress, setUseDefaultAddress] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -79,14 +117,35 @@ export const CheckoutPage = () => {
   }, [isLoggedIn, openAuthModal]);
 
   useEffect(() => {
-    if (currentUser) {
-      setForm((prev) => ({
-        ...prev,
-        fullName: prev.fullName || currentUser.name || '',
-        phone: prev.phone || currentUser.phone || '',
-      }));
+    if (!isLoggedIn) {
+      setProfileLoading(false);
+      return undefined;
     }
-  }, [currentUser]);
+
+    let mounted = true;
+
+    const loadDefaultAddress = async () => {
+      setProfileLoading(true);
+      try {
+        const profile = await userApi.getProfile();
+        if (!mounted) return;
+        updateCurrentUser(profile);
+        setDefaultProfile(profile);
+      } catch {
+        if (mounted && currentUser) {
+          setDefaultProfile(currentUser);
+        }
+      } finally {
+        if (mounted) setProfileLoading(false);
+      }
+    };
+
+    loadDefaultAddress();
+
+    return () => {
+      mounted = false;
+    };
+  }, [isLoggedIn, updateCurrentUser]);
 
   useEffect(() => {
     if (isLoggedIn && items.length === 0 && status !== 'success') {
@@ -95,8 +154,30 @@ export const CheckoutPage = () => {
   }, [isLoggedIn, items.length, navigate, status]);
 
   const handleChange = (field) => (e) => {
+    if (useDefaultAddress) {
+      setUseDefaultAddress(false);
+    }
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
   };
+
+  const handleUseDefaultAddress = (checked) => {
+    setUseDefaultAddress(checked);
+
+    if (checked && defaultProfile) {
+      setForm((prev) => ({
+        ...prev,
+        ...profileToFormFields(defaultProfile),
+      }));
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      ...EMPTY_ADDRESS_FIELDS,
+    }));
+  };
+
+  const savedAddressAvailable = hasSavedAddress(defaultProfile);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -219,6 +300,7 @@ export const CheckoutPage = () => {
             <div className="checkout-page__main">
               <div className="checkout-section">
                 <h3>Delivery Address</h3>
+
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label" htmlFor="checkout-name">Full Name *</label>
@@ -315,6 +397,37 @@ export const CheckoutPage = () => {
                     />
                   </div>
                 </div>
+
+                <div className="checkout-default-address">
+                  <label className="checkout-default-address__label">
+                    <input
+                      type="checkbox"
+                      checked={useDefaultAddress}
+                      disabled={profileLoading || !savedAddressAvailable}
+                      onChange={(event) => handleUseDefaultAddress(event.target.checked)}
+                    />
+                    <span>Use my default address</span>
+                  </label>
+
+                  {profileLoading && (
+                    <p className="checkout-default-address__hint">Loading saved address...</p>
+                  )}
+
+                  {!profileLoading && savedAddressAvailable && (
+                    <p className="checkout-default-address__preview">
+                      {formatSavedAddress(defaultProfile)}
+                    </p>
+                  )}
+
+                  {!profileLoading && !savedAddressAvailable && (
+                    <p className="checkout-default-address__hint">
+                      No saved address yet.{' '}
+                      <Link to="/account/profile">Add one in your profile</Link>
+                      {' '}or enter a different address above.
+                    </p>
+                  )}
+                </div>
+
                 <div className="form-group">
                   <label className="form-label" htmlFor="checkout-notes">Delivery Notes (optional)</label>
                   <textarea

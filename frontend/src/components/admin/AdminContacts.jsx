@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { adminApi } from '../../services/api';
 import { ConfirmDialog } from '../common/ConfirmDialog';
+import { AdminModal } from './AdminModal';
 
 const SUBJECT_LABELS = {
   general: 'General',
@@ -14,7 +15,6 @@ const SUBJECT_LABELS = {
 
 const STATUS_LABELS = {
   pending: 'Pending',
-  read: 'Read',
   replied: 'Replied',
 };
 
@@ -27,6 +27,8 @@ export const AdminContacts = () => {
   const [updatingId, setUpdatingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [replyModal, setReplyModal] = useState(null);
+  const [adminReply, setAdminReply] = useState('');
 
   const loadContacts = useCallback(async () => {
     setLoading(true);
@@ -51,16 +53,54 @@ export const AdminContacts = () => {
     loadContacts();
   }, [loadContacts]);
 
-  const handleStatusChange = async (contactId, status) => {
+  const handleStatusChange = async (contactId, payload) => {
     setUpdatingId(contactId);
     try {
-      await adminApi.updateContactStatus(contactId, status);
+      await adminApi.updateContactStatus(contactId, payload);
       await loadContacts();
+      setError('');
     } catch (err) {
       setError(err.message);
+      await loadContacts();
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleStatusSelect = (contact, nextStatus) => {
+    if (contact.status === nextStatus) return;
+
+    if (nextStatus === 'replied') {
+      setAdminReply(contact.adminReply || '');
+      setReplyModal(contact);
+      return;
+    }
+
+    handleStatusChange(contact.id, { status: nextStatus });
+  };
+
+  const closeReplyModal = () => {
+    if (updatingId) return;
+    setReplyModal(null);
+    setAdminReply('');
+  };
+
+  const handleReplySubmit = async (event) => {
+    event.preventDefault();
+    if (!replyModal) return;
+
+    const replyText = adminReply.trim();
+    if (!replyText) {
+      setError('Please enter a reply message for the customer.');
+      return;
+    }
+
+    await handleStatusChange(replyModal.id, {
+      status: 'replied',
+      adminReply: replyText,
+    });
+    setReplyModal(null);
+    setAdminReply('');
   };
 
   const handleDelete = async () => {
@@ -154,7 +194,7 @@ export const AdminContacts = () => {
                       className="form-input"
                       value={contact.status}
                       disabled={updatingId === contact.id}
-                      onChange={(event) => handleStatusChange(contact.id, event.target.value)}
+                      onChange={(event) => handleStatusSelect(contact, event.target.value)}
                     >
                       {Object.entries(STATUS_LABELS).map(([value, label]) => (
                         <option key={value} value={value}>{label}</option>
@@ -215,6 +255,44 @@ export const AdminContacts = () => {
           if (!deleting) setDeleteTarget(null);
         }}
       />
+
+      {replyModal && (
+        <AdminModal title="Reply to customer" onClose={closeReplyModal}>
+          <form className="admin-form" onSubmit={handleReplySubmit}>
+            <p className="text-muted" style={{ marginBottom: 'var(--space-4)' }}>
+              Write your reply below. The customer will receive it by email when you mark this message as replied.
+            </p>
+
+            <div className="info-box" style={{ marginBottom: 'var(--space-4)' }}>
+              <strong>{replyModal.name}</strong> — {SUBJECT_LABELS[replyModal.subject] || replyModal.subject}
+              <p className="text-muted" style={{ marginTop: 'var(--space-2)', marginBottom: 0 }}>
+                {replyModal.message}
+              </p>
+            </div>
+
+            <label className="form-group">
+              <span>Your reply</span>
+              <textarea
+                className="form-input"
+                rows={5}
+                value={adminReply}
+                onChange={(event) => setAdminReply(event.target.value)}
+                placeholder="Type your response to the customer..."
+                required
+              />
+            </label>
+
+            <div className="admin-form__actions">
+              <button type="button" className="btn btn-secondary" onClick={closeReplyModal} disabled={Boolean(updatingId)}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={updatingId === replyModal.id}>
+                {updatingId === replyModal.id ? 'Sending...' : 'Send Reply & Mark Replied'}
+              </button>
+            </div>
+          </form>
+        </AdminModal>
+      )}
     </>
   );
 };

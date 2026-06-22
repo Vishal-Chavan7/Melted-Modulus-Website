@@ -2,12 +2,28 @@ import { useCallback, useEffect, useState } from 'react';
 import { HiOutlineTrash } from 'react-icons/hi2';
 import { adminApi } from '../../services/api';
 import { ConfirmDialog } from '../common/ConfirmDialog';
+import { AdminModal } from './AdminModal';
 
 const STATUS_LABELS = {
   pending: 'Pending',
   reviewed: 'Reviewed',
   quoted: 'Quoted',
   closed: 'Closed',
+};
+
+const STATUS_MODAL_COPY = {
+  quoted: {
+    title: 'Send quote to customer',
+    description: 'Enter the quoted price. The customer will receive an email with these details.',
+    showPrice: true,
+    priceRequired: true,
+  },
+  closed: {
+    title: 'Close quote request',
+    description: 'Optionally add a note for the customer. They will receive a closure email.',
+    showPrice: false,
+    priceRequired: false,
+  },
 };
 
 export const AdminCustomQuotes = () => {
@@ -19,6 +35,8 @@ export const AdminCustomQuotes = () => {
   const [updatingId, setUpdatingId] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [statusModal, setStatusModal] = useState(null);
+  const [statusForm, setStatusForm] = useState({ quotedPrice: '', adminNotes: '' });
 
   const loadQuotes = useCallback(async () => {
     setLoading(true);
@@ -43,16 +61,63 @@ export const AdminCustomQuotes = () => {
     loadQuotes();
   }, [loadQuotes]);
 
-  const handleStatusChange = async (quoteId, status) => {
+  const handleStatusChange = async (quoteId, status, extras = {}) => {
     setUpdatingId(quoteId);
     try {
-      await adminApi.updateCustomQuoteStatus(quoteId, status);
+      await adminApi.updateCustomQuoteStatus(quoteId, { status, ...extras });
       await loadQuotes();
+      setError('');
     } catch (err) {
       setError(err.message);
+      await loadQuotes();
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleStatusSelect = (quote, nextStatus) => {
+    if (quote.status === nextStatus) return;
+
+    if (nextStatus === 'quoted' || nextStatus === 'closed') {
+      setStatusForm({
+        quotedPrice: quote.quotedPrice != null ? String(quote.quotedPrice) : '',
+        adminNotes: quote.adminNotes || '',
+      });
+      setStatusModal({ quote, nextStatus });
+      return;
+    }
+
+    handleStatusChange(quote.id, nextStatus);
+  };
+
+  const closeStatusModal = () => {
+    if (updatingId) return;
+    setStatusModal(null);
+    setStatusForm({ quotedPrice: '', adminNotes: '' });
+  };
+
+  const handleStatusModalSubmit = async (event) => {
+    event.preventDefault();
+    if (!statusModal) return;
+
+    const { quote, nextStatus } = statusModal;
+    const payload = {
+      status: nextStatus,
+      adminNotes: statusForm.adminNotes.trim() || undefined,
+    };
+
+    if (nextStatus === 'quoted') {
+      const quotedPrice = Number(statusForm.quotedPrice);
+      if (!Number.isFinite(quotedPrice) || quotedPrice < 0) {
+        setError('Please enter a valid quoted price.');
+        return;
+      }
+      payload.quotedPrice = quotedPrice;
+    }
+
+    await handleStatusChange(quote.id, nextStatus, payload);
+    setStatusModal(null);
+    setStatusForm({ quotedPrice: '', adminNotes: '' });
   };
 
   const handleDelete = async () => {
@@ -156,7 +221,7 @@ export const AdminCustomQuotes = () => {
                       className="form-input"
                       value={quote.status}
                       disabled={updatingId === quote.id}
-                      onChange={(event) => handleStatusChange(quote.id, event.target.value)}
+                      onChange={(event) => handleStatusSelect(quote, event.target.value)}
                     >
                       {Object.entries(STATUS_LABELS).map(([value, label]) => (
                         <option key={value} value={value}>{label}</option>
@@ -217,6 +282,58 @@ export const AdminCustomQuotes = () => {
           if (!deleting) setDeleteTarget(null);
         }}
       />
+
+      {statusModal && (
+        <AdminModal
+          title={STATUS_MODAL_COPY[statusModal.nextStatus]?.title || 'Update quote status'}
+          onClose={closeStatusModal}
+        >
+          <form className="admin-form" onSubmit={handleStatusModalSubmit}>
+            <p className="text-muted" style={{ marginBottom: 'var(--space-4)' }}>
+              {STATUS_MODAL_COPY[statusModal.nextStatus]?.description}
+            </p>
+
+            {STATUS_MODAL_COPY[statusModal.nextStatus]?.showPrice && (
+              <label className="form-group">
+                <span>Quoted price (₹)</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  className="form-input"
+                  value={statusForm.quotedPrice}
+                  onChange={(event) =>
+                    setStatusForm((prev) => ({ ...prev, quotedPrice: event.target.value }))
+                  }
+                  required
+                />
+              </label>
+            )}
+
+            <label className="form-group">
+              <span>{statusModal.nextStatus === 'closed' ? 'Note for customer (optional)' : 'Notes (optional)'}</span>
+              <textarea
+                className="form-input"
+                rows={4}
+                value={statusForm.adminNotes}
+                onChange={(event) =>
+                  setStatusForm((prev) => ({ ...prev, adminNotes: event.target.value }))
+                }
+                placeholder="Add any details the customer should know..."
+              />
+            </label>
+
+            <div className="admin-form__actions">
+              <button type="button" className="btn btn-secondary" onClick={closeStatusModal} disabled={Boolean(updatingId)}>
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={updatingId === statusModal.quote.id}>
+                {updatingId === statusModal.quote.id ? 'Saving...' : 'Update & Notify Customer'}
+              </button>
+            </div>
+          </form>
+        </AdminModal>
+      )}
     </>
   );
 };

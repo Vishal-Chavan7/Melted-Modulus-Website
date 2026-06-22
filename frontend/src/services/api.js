@@ -290,7 +290,8 @@ export const normalizeContact = (contact) => ({
   email: contact.email || '',
   subject: contact.subject || 'general',
   message: contact.message || '',
-  status: contact.status || 'pending',
+  adminReply: contact.adminReply || '',
+  status: contact.status === 'read' ? 'pending' : (contact.status || 'pending'),
   createdAt: contact.createdAt,
 });
 
@@ -303,6 +304,8 @@ export const normalizeCustomQuote = (quote) => ({
   description: quote.description || '',
   material: quote.material || '',
   color: quote.color || '',
+  quotedPrice: quote.quotedPrice ?? null,
+  adminNotes: quote.adminNotes || '',
   status: quote.status || 'pending',
   createdAt: quote.createdAt,
 });
@@ -387,11 +390,11 @@ export const adminApi = {
       pagination: data.pagination || {},
     };
   },
-  updateContactStatus: async (contactId, status) =>
+  updateContactStatus: async (contactId, payload) =>
     normalizeContact(
       await apiRequest(`/admin/contacts/${contactId}/status`, {
         method: 'PATCH',
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(payload),
       }),
     ),
   deleteContact: async (contactId) => apiRequest(`/admin/contacts/${contactId}`, { method: 'DELETE' }),
@@ -406,11 +409,11 @@ export const adminApi = {
       pagination: data.pagination || {},
     };
   },
-  updateCustomQuoteStatus: async (quoteId, status) =>
+  updateCustomQuoteStatus: async (quoteId, payload) =>
     normalizeCustomQuote(
       await apiRequest(`/admin/custom-quotes/${quoteId}/status`, {
         method: 'PATCH',
-        body: JSON.stringify({ status }),
+        body: JSON.stringify(payload),
       }),
     ),
   deleteCustomQuote: async (quoteId) =>
