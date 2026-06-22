@@ -3,6 +3,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import CustomQuote from "../../models/customQuote.model.js";
+import { sendQuoteStatusEmail } from "../../utils/quoteEmailService.js";
 
 const getAllCustomQuotes = asyncHandler(async (req, res) => {
   const page = Math.max(Number(req.query.page) || 1, 1);
@@ -68,20 +69,41 @@ const getCustomQuoteById = asyncHandler(async (req, res) => {
 
 const updateCustomQuoteStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, quotedPrice, adminNotes } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid quote id");
   }
 
-  const quote = await CustomQuote.findByIdAndUpdate(
-    id,
-    { status },
-    { new: true, runValidators: true },
-  );
+  const existingQuote = await CustomQuote.findById(id);
 
-  if (!quote) {
+  if (!existingQuote) {
     throw new ApiError(404, "Custom quote not found");
+  }
+
+  if (existingQuote.status === status) {
+    throw new ApiError(400, `Quote request is already ${status}`);
+  }
+
+  const updateData = { status };
+
+  if (quotedPrice != null) {
+    updateData.quotedPrice = quotedPrice;
+  }
+
+  if (adminNotes != null) {
+    updateData.adminNotes = adminNotes;
+  }
+
+  const quote = await CustomQuote.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  try {
+    await sendQuoteStatusEmail(quote, status);
+  } catch (emailError) {
+    console.error(`Custom quote ${status} email failed:`, emailError.message);
   }
 
   return res.status(200).json(new ApiResponse(200, quote, "Custom quote status updated successfully"));

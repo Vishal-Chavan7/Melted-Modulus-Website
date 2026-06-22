@@ -3,6 +3,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import Contact from "../../models/contact.model.js";
+import { sendContactRepliedEmail } from "../../utils/contactEmailService.js";
 
 const getAllContacts = asyncHandler(async (req, res) => {
   const page = Math.max(Number(req.query.page) || 1, 1);
@@ -68,20 +69,39 @@ const getContactById = asyncHandler(async (req, res) => {
 
 const updateContactStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, adminReply } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid contact id");
   }
 
-  const contact = await Contact.findByIdAndUpdate(
-    id,
-    { status },
-    { new: true, runValidators: true },
-  );
+  const existingContact = await Contact.findById(id);
 
-  if (!contact) {
+  if (!existingContact) {
     throw new ApiError(404, "Contact message not found");
+  }
+
+  if (existingContact.status === status) {
+    throw new ApiError(400, `Contact message is already ${status}`);
+  }
+
+  const updateData = { status };
+
+  if (adminReply != null) {
+    updateData.adminReply = adminReply;
+  }
+
+  const contact = await Contact.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (status === "replied") {
+    try {
+      await sendContactRepliedEmail(contact);
+    } catch (emailError) {
+      console.error("Contact replied email failed:", emailError.message);
+    }
   }
 
   return res.status(200).json(new ApiResponse(200, contact, "Contact status updated successfully"));

@@ -36,6 +36,14 @@ const customQuoteSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    quotedPrice: {
+      type: Number,
+      min: 0,
+    },
+    adminNotes: {
+      type: String,
+      trim: true,
+    },
     status: {
       type: String,
       enum: ["pending", "reviewed", "quoted", "closed"],

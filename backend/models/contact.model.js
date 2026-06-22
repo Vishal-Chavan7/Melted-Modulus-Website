@@ -23,9 +23,13 @@ const contactSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    adminReply: {
+      type: String,
+      trim: true,
+    },
     status: {
       type: String,
-      enum: ["pending", "read", "replied"],
+      enum: ["pending", "replied"],
       default: "pending",
     },
   },

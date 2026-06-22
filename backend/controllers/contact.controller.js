@@ -1,6 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import Contact from "../models/contact.model.js";
+import { sendContactSubmissionEmail } from "../utils/contactEmailService.js";
 
 const createContact = asyncHandler(async (req, res) => {
   const { name, email, subject, message } = req.body;
@@ -11,6 +12,12 @@ const createContact = asyncHandler(async (req, res) => {
     subject,
     message,
   });
+
+  try {
+    await sendContactSubmissionEmail(contact);
+  } catch (emailError) {
+    console.error("Contact submission email failed:", emailError.message);
+  }
 
   return res
     .status(201)
