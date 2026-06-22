@@ -1,0 +1,208 @@
+/* ============================================
+   MeltedModulus — Footer
+   4-column footer with brand, links, social,
+   legal, and payment
+   ============================================ */
+
+.footer {
+  background: var(--clr-bg-secondary);
+  border-top: 1px solid var(--clr-border);
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-8);
+}
+
+.footer__main {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: var(--space-12);
+  margin-bottom: var(--space-12);
+}
+
+/* Brand Column */
+.footer__brand {
+  max-width: 300px;
+}
+
+.footer__brand-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  text-decoration: none;
+}
+
+.footer__brand-logo img {
+  height: 36px;
+  width: auto;
+  border-radius: var(--radius-sm);
+}
+
+.footer__brand-name {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: var(--fw-bold);
+  color: var(--clr-text-primary);
+}
+
+.footer__brand-name span {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer__brand-desc {
+  font-size: var(--fs-small);
+  color: var(--clr-text-secondary);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--space-6);
+}
+
+/* Social Links */
+.footer__social {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.footer__social-link {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  color: var(--clr-text-secondary);
+  transition: var(--transition-base);
+}
+
+.footer__social-link:hover {
+  color: var(--clr-text-primary);
+  border-color: var(--clr-brand);
+  background: rgba(162, 89, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.footer__social-link svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Link Columns */
+.footer__column h4 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-small);
+  font-weight: var(--fw-semibold);
+  color: var(--clr-text-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-wider);
+  margin-bottom: var(--space-6);
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.footer__link {
+  font-size: var(--fs-small);
+  color: var(--clr-text-secondary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.footer__link:hover {
+  color: var(--clr-brand-light);
+  transform: translateX(4px);
+}
+
+/* Bottom Bar */
+.footer__bottom {
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--clr-divider);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.footer__copy {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+}
+
+.footer__legal {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.footer__legal a {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.footer__legal a:hover {
+  color: var(--clr-text-secondary);
+}
+
+.footer__payment {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.footer__payment-label {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  margin-right: var(--space-2);
+}
+
+.footer__payment-icon {
+  width: 40px;
+  height: 26px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--clr-text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .footer__main {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .footer__main {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer__legal {
+    justify-content: center;
+  }
+
+  .footer__payment {
+    justify-content: center;
+  }
+}
