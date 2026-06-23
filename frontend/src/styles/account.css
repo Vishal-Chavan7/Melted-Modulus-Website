@@ -3,6 +3,11 @@
    Profile, orders, wishlist
    ============================================ */
 
+.account-page {
+  padding-top: calc(var(--navbar-height) + var(--space-10));
+  padding-bottom: var(--space-12);
+}
+
 .account-layout {
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -307,6 +312,11 @@
 }
 
 @media (max-width: 768px) {
+  .account-page {
+    padding-top: calc(var(--navbar-height) + var(--space-8));
+    padding-bottom: var(--space-10);
+  }
+
   .account-layout {
     grid-template-columns: 1fr;
   }

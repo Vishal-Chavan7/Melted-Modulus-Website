@@ -4,7 +4,6 @@ import {
   HiOutlineArchiveBox,
   HiOutlineHeart,
 } from 'react-icons/hi2';
-import { PageHero } from '../common/PageHero';
 
 const NAV_ITEMS = [
   { to: '/account/profile', label: 'My Profile', Icon: HiOutlineUser },
@@ -13,34 +12,27 @@ const NAV_ITEMS = [
 ];
 
 export const AccountLayout = () => (
-  <>
-    <PageHero
-      label="Account"
-      titleHighlight="My Account"
-      description="Manage your profile, orders, and saved products."
-    />
-    <section>
-      <div className="container">
-        <div className="account-layout">
-          <aside className="account-nav">
-            <nav>
-              {NAV_ITEMS.map(({ to, label, Icon }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  className={({ isActive }) => `account-nav__link ${isActive ? 'active' : ''}`}
-                >
-                  <Icon className="ri-icon" aria-hidden="true" />
-                  {label}
-                </NavLink>
-              ))}
-            </nav>
-          </aside>
-          <div className="account-content">
-            <Outlet />
-          </div>
+  <section className="account-page">
+    <div className="container">
+      <div className="account-layout">
+        <aside className="account-nav">
+          <nav>
+            {NAV_ITEMS.map(({ to, label, Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) => `account-nav__link ${isActive ? 'active' : ''}`}
+              >
+                <Icon className="ri-icon" aria-hidden="true" />
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        </aside>
+        <div className="account-content">
+          <Outlet />
         </div>
       </div>
-    </section>
-  </>
+    </div>
+  </section>
 );
