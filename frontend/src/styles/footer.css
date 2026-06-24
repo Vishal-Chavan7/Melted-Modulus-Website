@@ -185,24 +185,135 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);
   }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-6);
+  }
+
   .footer__main {
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+    max-width: none;
+  }
+
+  .footer__brand-desc {
+    max-width: 36rem;
+  }
+
+  .footer__column h4 {
+    margin-bottom: var(--space-4);
+  }
+
+  .footer__links {
+    gap: var(--space-2);
   }
 
   .footer__bottom {
     flex-direction: column;
+    align-items: center;
     text-align: center;
+    gap: var(--space-5);
+    padding-top: var(--space-6);
   }
 
   .footer__legal {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
   }
 
   .footer__payment {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .footer__payment-label {
+    width: 100%;
+    margin-right: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer__main {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6) var(--space-4);
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer__column:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .footer__brand-logo {
+    justify-content: flex-start;
+  }
+
+  .footer__social {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-5);
+  }
+
+  .footer__main {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .footer__column:last-child {
+    grid-column: auto;
+  }
+
+  .footer__brand-desc {
+    font-size: var(--fs-xs);
+    margin-bottom: var(--space-4);
+  }
+
+  .footer__social-link {
+    width: 36px;
+    height: 36px;
+  }
+
+  .footer__column h4 {
+    font-size: var(--fs-xs);
+    margin-bottom: var(--space-3);
+  }
+
+  .footer__link:hover {
+    transform: none;
+  }
+
+  .footer__legal {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .footer__payment-icon {
+    width: 36px;
+    height: 24px;
+    font-size: 0.625rem;
   }
 }
