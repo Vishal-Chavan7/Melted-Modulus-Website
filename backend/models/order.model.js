@@ -85,6 +85,13 @@ const orderSchema = new mongoose.Schema(
     },
 
     paymentId: String,
+
+    razorpayOrderId: {
+      type: String,
+      index: true,
+    },
+
+    paidAt: Date,
   },
   {
     timestamps: true,

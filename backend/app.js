@@ -18,11 +18,14 @@ import adminCustomQuoteRouter from './routes/adminCustomQuote.route.js';
 import customQuoteRouter from './routes/customQuote.route.js';
 import contactRouter from './routes/contact.route.js';
 import wishlistRouter from './routes/wishlist.route.js';
+import { handleRazorpayWebhook } from './controllers/payment.controller.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -81,6 +84,13 @@ app.use('/api/v1', contactRouter)
 
 // wishlist routes
 app.use('/api/v1', wishlistRouter)
+
+// Razorpay webhook route
+app.post(
+  '/api/v1/payments/razorpay/webhook',
+  express.raw({ type: 'application/json' }),
+  handleRazorpayWebhook,
+);
 
 
 app.use(errorHandler)
