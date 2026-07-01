@@ -3,7 +3,10 @@
    All CSS custom properties (variables)
    ============================================ */
 
-:root {
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
   /* ---- Colors ---- */
   --clr-bg-primary: #0D0D0D;
   --clr-bg-secondary: #111118;
@@ -44,17 +47,80 @@
   --clr-glass-border: rgba(255, 255, 255, 0.1);
   --clr-glass-strong: rgba(255, 255, 255, 0.12);
 
+  /* Theme-specific surfaces */
+  --clr-navbar-scrolled-bg: rgba(13, 13, 13, 0.85);
+  --clr-mobile-menu-bg: rgba(13, 13, 13, 0.97);
+  --clr-overlay: rgba(0, 0, 0, 0.65);
+  --clr-hero-image-filter: brightness(0.4) saturate(1.2);
+
   /* Gradients */
   --gradient-brand: linear-gradient(90deg, #A259FF 0%, #00BFA6 100%);
   --gradient-brand-hover: linear-gradient(90deg, #B87AFF 0%, #33CCBB 100%);
   --gradient-warm: linear-gradient(90deg, #FF6B35 0%, #A259FF 100%);
   --gradient-hero: linear-gradient(180deg, rgba(13,13,13,0) 0%, rgba(13,13,13,0.8) 60%, #0D0D0D 100%);
   --gradient-section: linear-gradient(180deg, #0D0D0D 0%, #111118 50%, #0D0D0D 100%);
+  --gradient-hero-overlay:
+    linear-gradient(180deg, rgba(13, 13, 13, 0.3) 0%, rgba(13, 13, 13, 0.6) 50%, #0D0D0D 100%),
+    radial-gradient(ellipse at 30% 40%, rgba(162, 89, 255, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(0, 191, 166, 0.1) 0%, transparent 60%);
   --gradient-card-violet: linear-gradient(135deg, rgba(162,89,255,0.15) 0%, rgba(162,89,255,0.02) 100%);
   --gradient-card-cyan: linear-gradient(135deg, rgba(0,191,166,0.15) 0%, rgba(0,191,166,0.02) 100%);
   --gradient-mesh: radial-gradient(ellipse at 20% 50%, rgba(162,89,255,0.12) 0%, transparent 50%),
                     radial-gradient(ellipse at 80% 20%, rgba(0,191,166,0.08) 0%, transparent 50%),
                     radial-gradient(ellipse at 60% 80%, rgba(255,107,53,0.06) 0%, transparent 50%);
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.6);
+  --shadow-glow-brand: 0 0 20px rgba(162, 89, 255, 0.3), 0 0 60px rgba(162, 89, 255, 0.1);
+  --shadow-glow-accent: 0 0 20px rgba(0, 191, 166, 0.3), 0 0 60px rgba(0, 191, 166, 0.1);
+  --shadow-glow-warm: 0 0 20px rgba(255, 107, 53, 0.3);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --clr-bg-primary: #F7F6FB;
+  --clr-bg-secondary: #FFFFFF;
+  --clr-surface: #FFFFFF;
+  --clr-surface-hover: #F3F0FA;
+  --clr-surface-light: #EDE9F7;
+
+  --clr-text-primary: #1A1A2E;
+  --clr-text-secondary: #4B5563;
+  --clr-text-muted: #6B7280;
+  --clr-text-inverse: #FFFFFF;
+
+  --clr-border: rgba(0, 0, 0, 0.08);
+  --clr-border-hover: rgba(0, 0, 0, 0.14);
+  --clr-divider: rgba(0, 0, 0, 0.06);
+
+  --clr-glass: rgba(0, 0, 0, 0.03);
+  --clr-glass-hover: rgba(0, 0, 0, 0.05);
+  --clr-glass-border: rgba(0, 0, 0, 0.08);
+  --clr-glass-strong: rgba(0, 0, 0, 0.06);
+
+  --clr-navbar-scrolled-bg: rgba(255, 255, 255, 0.88);
+  --clr-mobile-menu-bg: rgba(255, 255, 255, 0.98);
+  --clr-overlay: rgba(15, 23, 42, 0.45);
+  --clr-hero-image-filter: brightness(0.92) saturate(1.05);
+
+  --gradient-hero: linear-gradient(180deg, rgba(247,246,251,0) 0%, rgba(247,246,251,0.85) 60%, #F7F6FB 100%);
+  --gradient-section: linear-gradient(180deg, #F7F6FB 0%, #FFFFFF 50%, #F7F6FB 100%);
+  --gradient-hero-overlay:
+    linear-gradient(180deg, rgba(247, 246, 251, 0.15) 0%, rgba(247, 246, 251, 0.75) 50%, #F7F6FB 100%),
+    radial-gradient(ellipse at 30% 40%, rgba(162, 89, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(0, 191, 166, 0.08) 0%, transparent 60%);
+
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.1);
+  --shadow-xl: 0 16px 64px rgba(15, 23, 42, 0.12);
+}
+
+:root {
 
   /* ---- Typography ---- */
   --font-heading: 'Space Grotesk', system-ui, -apple-system, sans-serif;
@@ -115,15 +181,6 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
-
-  /* ---- Shadows ---- */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.6);
-  --shadow-glow-brand: 0 0 20px rgba(162, 89, 255, 0.3), 0 0 60px rgba(162, 89, 255, 0.1);
-  --shadow-glow-accent: 0 0 20px rgba(0, 191, 166, 0.3), 0 0 60px rgba(0, 191, 166, 0.1);
-  --shadow-glow-warm: 0 0 20px rgba(255, 107, 53, 0.3);
 
   /* ---- Transitions ---- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

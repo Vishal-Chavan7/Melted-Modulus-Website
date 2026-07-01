@@ -235,12 +235,54 @@ export const contactApi = {
     }),
 };
 
+export const ONLINE_PAYMENT_METHODS = ['upi', 'card', 'net_banking'];
+
+export const isOnlinePaymentMethod = (paymentMethod) =>
+  ONLINE_PAYMENT_METHODS.includes(paymentMethod);
+
 export const checkoutApi = {
   submit: ({ shippingAddress, paymentMethod }) =>
     apiRequest('/checkout', {
       method: 'POST',
       body: JSON.stringify({ shippingAddress, paymentMethod }),
-    }),
+    }).then(normalizeOrder),
+  createOnlineOrder: async ({ shippingAddress, paymentMethod }) => {
+    const data = await apiRequest('/checkout/online', {
+      method: 'POST',
+      body: JSON.stringify({ shippingAddress, paymentMethod }),
+    });
+
+    return {
+      order: normalizeOrder(data.order),
+      payment: data.payment,
+    };
+  },
+  verifyPayment: ({
+    orderId,
+    razorpay_order_id,
+    razorpay_payment_id,
+    razorpay_signature,
+  }) =>
+    apiRequest('/checkout/verify-payment', {
+      method: 'POST',
+      body: JSON.stringify({
+        orderId,
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+      }),
+    }).then(normalizeOrder),
+  retryPayment: async (orderId) => {
+    const data = await apiRequest('/checkout/retry-payment', {
+      method: 'POST',
+      body: JSON.stringify({ orderId }),
+    });
+
+    return {
+      order: normalizeOrder(data.order),
+      payment: data.payment,
+    };
+  },
 };
 
 export const normalizeUser = (user) => ({
@@ -272,10 +314,15 @@ export const normalizeOrder = (order) => ({
     product: item.product ? normalizeProduct(item.product) : null,
   })),
   totalAmount: toNumber(order.totalAmount),
+  subtotalAmount: toNumber(order.subtotalAmount),
+  shippingCharge: toNumber(order.shippingCharge),
   shippingAddress: order.shippingAddress || {},
   paymentMethod: order.paymentMethod,
   paymentStatus: order.paymentStatus,
+  paymentId: order.paymentId || '',
+  razorpayOrderId: order.razorpayOrderId || '',
   orderStatus: order.orderStatus,
+  paidAt: order.paidAt,
   createdAt: order.createdAt,
 });
 

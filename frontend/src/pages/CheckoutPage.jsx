@@ -10,9 +10,10 @@ import {
 import { PageHero } from '../components/common/PageHero';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { checkoutApi, userApi } from '../services/api';
+import { checkoutApi, userApi, isOnlinePaymentMethod } from '../services/api';
 import { formatPrice } from '../utils/helpers';
 import { setAuthRedirect } from '../utils/authRedirect';
+import { loadRazorpayScript, openRazorpayCheckout } from '../utils/razorpay';
 
 const PAYMENT_METHODS = [
   {
@@ -184,6 +185,16 @@ export const CheckoutPage = () => {
     setStatus('loading');
     setError('');
 
+    const shippingAddress = {
+      fullName: form.fullName.trim(),
+      phone: form.phone.trim(),
+      street: form.street.trim(),
+      city: form.city.trim(),
+      state: form.state.trim(),
+      country: form.country.trim(),
+      pincode: form.pincode.trim(),
+    };
+
     try {
       const hasInvalidItems = items.some((item) => !canSyncProduct(item.id));
       if (hasInvalidItems) {
@@ -194,16 +205,39 @@ export const CheckoutPage = () => {
 
       await syncCartForCheckout();
       const displayTotal = getGrandTotal();
+
+      if (isOnlinePaymentMethod(paymentMethod)) {
+        const { order, payment } = await checkoutApi.createOnlineOrder({
+          shippingAddress,
+          paymentMethod,
+        });
+
+        await loadRazorpayScript();
+
+        setStatus('idle');
+
+        const razorpayResponse = await openRazorpayCheckout({
+          payment,
+          description: `Order ${order.orderNumber}`,
+        });
+
+        setStatus('loading');
+
+        const verifiedOrder = await checkoutApi.verifyPayment({
+          orderId: order.id,
+          razorpay_order_id: razorpayResponse.razorpay_order_id,
+          razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+          razorpay_signature: razorpayResponse.razorpay_signature,
+        });
+
+        await clearCart();
+        setOrderResult({ ...verifiedOrder, displayTotal });
+        setStatus('success');
+        return;
+      }
+
       const order = await checkoutApi.submit({
-        shippingAddress: {
-          fullName: form.fullName.trim(),
-          phone: form.phone.trim(),
-          street: form.street.trim(),
-          city: form.city.trim(),
-          state: form.state.trim(),
-          country: form.country.trim(),
-          pincode: form.pincode.trim(),
-        },
+        shippingAddress,
         paymentMethod,
       });
 
@@ -271,9 +305,14 @@ export const CheckoutPage = () => {
                 <p><span>Total amount</span> {formatPrice(orderResult.displayTotal ?? orderResult.totalAmount)}</p>
                 <p><span>Delivery to</span> {form.fullName}, {form.city} — {form.pincode}</p>
               </div>
-              {paymentMethod !== 'cash_on_delivery' && (
+              {paymentMethod !== 'cash_on_delivery' && orderResult.paymentStatus !== 'paid' && (
                 <p className="checkout-success__note">
                   Payment instructions will be shared on your registered email and phone shortly.
+                </p>
+              )}
+              {orderResult.paymentStatus === 'paid' && (
+                <p className="checkout-success__note">
+                  Payment received successfully. Your order confirmation has been sent by email.
                 </p>
               )}
               <div className="checkout-success__actions">

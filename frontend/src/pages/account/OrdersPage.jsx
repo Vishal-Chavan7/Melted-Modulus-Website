@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiOutlineArchiveBox } from 'react-icons/hi2';
-import { orderApi, resolveImageUrl } from '../../services/api';
+import { checkoutApi, isOnlinePaymentMethod, orderApi, resolveImageUrl } from '../../services/api';
 import { formatPrice } from '../../utils/helpers';
 import { ConfirmDialog } from '../../components/common/ConfirmDialog';
+import { loadRazorpayScript, openRazorpayCheckout } from '../../utils/razorpay';
 
 const PAYMENT_LABELS = {
   cash_on_delivery: 'Cash on Delivery',
@@ -26,6 +27,7 @@ export const OrdersPage = () => {
   const [error, setError] = useState('');
   const [cancellingId, setCancellingId] = useState(null);
   const [cancelTarget, setCancelTarget] = useState(null);
+  const [payingId, setPayingId] = useState(null);
 
   const loadOrders = async () => {
     setLoading(true);
@@ -57,6 +59,43 @@ export const OrdersPage = () => {
       setCancellingId(null);
     }
   };
+
+  const handlePayNow = async (order) => {
+    setPayingId(order.id);
+    setError('');
+
+    try {
+      const { payment } = await checkoutApi.retryPayment(order.id);
+      await loadRazorpayScript();
+
+      setPayingId(null);
+
+      const razorpayResponse = await openRazorpayCheckout({
+        payment,
+        description: `Order ${order.orderNumber}`,
+      });
+
+      setPayingId(order.id);
+
+      await checkoutApi.verifyPayment({
+        orderId: order.id,
+        razorpay_order_id: razorpayResponse.razorpay_order_id,
+        razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+        razorpay_signature: razorpayResponse.razorpay_signature,
+      });
+
+      await loadOrders();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setPayingId(null);
+    }
+  };
+
+  const canPayOnline = (order) =>
+    order.paymentStatus !== 'paid' &&
+    order.orderStatus !== 'cancelled' &&
+    isOnlinePaymentMethod(order.paymentMethod);
 
   if (loading) {
     return <p className="account-loading">Loading orders...</p>;
@@ -127,16 +166,28 @@ export const OrdersPage = () => {
               </div>
               <div className="order-card__total">
                 <strong>{formatPrice(order.totalAmount)}</strong>
-                {['pending', 'processing'].includes(order.orderStatus) && order.paymentStatus !== 'paid' && (
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => setCancelTarget(order)}
-                    disabled={cancellingId === order.id}
-                  >
-                    {cancellingId === order.id ? 'Cancelling...' : 'Cancel Order'}
-                  </button>
-                )}
+                <div className="order-card__actions">
+                  {canPayOnline(order) && (
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm"
+                      onClick={() => handlePayNow(order)}
+                      disabled={payingId === order.id || cancellingId === order.id}
+                    >
+                      {payingId === order.id ? 'Processing...' : 'Pay Now'}
+                    </button>
+                  )}
+                  {['pending', 'processing'].includes(order.orderStatus) && order.paymentStatus !== 'paid' && (
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setCancelTarget(order)}
+                      disabled={cancellingId === order.id || payingId === order.id}
+                    >
+                      {cancellingId === order.id ? 'Cancelling...' : 'Cancel Order'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </article>

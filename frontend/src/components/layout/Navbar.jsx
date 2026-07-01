@@ -11,6 +11,8 @@ import {
 } from 'react-icons/hi2';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { ThemeToggle } from '../common/ThemeToggle';
 import logo from '../../assets/images/logo.png';
 
 const MenuIconLink = ({ icon: Icon, children, to, onClick }) => (
@@ -27,6 +29,7 @@ export const Navbar = () => {
   
   const { getTotalItems, openDrawer } = useCart();
   const { currentUser, isLoggedIn, isAdmin, logout, openAuthModal } = useAuth();
+  const { theme } = useTheme();
   const location = useLocation();
 
   useEffect(() => {
@@ -127,6 +130,8 @@ export const Navbar = () => {
             <button className="navbar__login-btn" onClick={openAuthModal}>Sign In</button>
           )}
 
+          <ThemeToggle />
+
           <button className="navbar__cart-btn" aria-label="Open shopping cart" onClick={openDrawer}>
             <HiOutlineShoppingCart className="ri-icon" aria-hidden="true" size={22} />
             <span className="cart-badge">{getTotalItems() > 0 ? getTotalItems() : ''}</span>
@@ -147,6 +152,11 @@ export const Navbar = () => {
         <NavLink to="/custom" className="navbar__mobile-link">Custom</NavLink>
         <NavLink to="/about" className="navbar__mobile-link">About</NavLink>
         <NavLink to="/contact" className="navbar__mobile-link">Contact Us</NavLink>
+
+        <div className="navbar__mobile-theme">
+          <ThemeToggle className="theme-toggle--mobile" />
+          <span>{theme === 'light' ? 'Light mode' : 'Dark mode'}</span>
+        </div>
         
         {isLoggedIn ? (
           <div className="mobile-auth" style={{ marginTop: 'var(--space-4)', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--clr-border)' }}>

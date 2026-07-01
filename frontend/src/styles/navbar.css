@@ -15,11 +15,11 @@
 }
 
 .navbar.scrolled {
-  background: rgba(13, 13, 13, 0.85);
+  background: var(--clr-navbar-scrolled-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--clr-glass-border);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .navbar__inner {
@@ -137,6 +137,39 @@
   background: var(--clr-glass);
 }
 
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-text-secondary);
+  background: transparent;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  color: var(--clr-brand);
+  border-color: var(--clr-brand);
+  background: rgba(162, 89, 255, 0.08);
+}
+
+.theme-toggle--mobile {
+  width: 48px;
+  height: 48px;
+}
+
+.navbar__mobile-theme {
+  display: none;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--clr-text-muted);
+  font-size: var(--fs-small);
+}
+
 .navbar__cart-btn svg {
   width: 22px;
   height: 22px;
@@ -184,7 +217,7 @@
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(13, 13, 13, 0.97);
+  background: var(--clr-mobile-menu-bg);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   z-index: calc(var(--z-navbar) - 1);
@@ -235,8 +268,13 @@
 @media (max-width: 768px) {
   .navbar__links,
   .navbar__login-btn,
-  .user-menu {
+  .user-menu,
+  .navbar__actions > .theme-toggle:not(.theme-toggle--mobile) {
     display: none;
+  }
+
+  .navbar__mobile-theme {
+    display: flex;
   }
 
   .navbar__toggle {
