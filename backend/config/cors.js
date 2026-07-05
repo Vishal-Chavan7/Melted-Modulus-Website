@@ -1,6 +1,6 @@
 const LOCAL_DEV_ORIGIN = "http://localhost:5173";
 
-const ALLOWED_METHODS = [
+export const ALLOWED_METHODS = [
   "GET",
   "HEAD",
   "PUT",
@@ -10,7 +10,7 @@ const ALLOWED_METHODS = [
   "OPTIONS",
 ];
 
-const ALLOWED_HEADERS = ["Content-Type", "Authorization"];
+export const ALLOWED_HEADERS = ["Content-Type", "Authorization"];
 
 const normalizeOrigin = (url) => String(url || "").trim().replace(/\/+$/, "");
 
@@ -34,22 +34,42 @@ const staticAllowedOrigins = parseAllowedOrigins();
 const isVercelOrigin = (origin) =>
   origin.startsWith("https://") && origin.endsWith(".vercel.app");
 
-export const corsOriginChecker = (origin, callback) => {
-  if (!origin) {
-    return callback(null, true);
-  }
+export const isOriginAllowed = (origin) => {
+  if (!origin) return true;
 
   const normalized = normalizeOrigin(origin);
 
-  if (staticAllowedOrigins.has(normalized)) {
-    return callback(null, true);
+  if (staticAllowedOrigins.has(normalized)) return true;
+  if (normalized === LOCAL_DEV_ORIGIN) return true;
+  if (isVercelOrigin(normalized)) return true;
+
+  return false;
+};
+
+export const applyCors = (req, res, next) => {
+  const origin = req.headers.origin;
+  const allowed = !origin || isOriginAllowed(origin);
+
+  if (allowed && origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Vary", "Origin");
   }
 
-  if (normalized === LOCAL_DEV_ORIGIN) {
-    return callback(null, true);
+  if (req.method === "OPTIONS") {
+    if (allowed && origin) {
+      res.setHeader("Access-Control-Allow-Methods", ALLOWED_METHODS.join(","));
+      res.setHeader("Access-Control-Allow-Headers", ALLOWED_HEADERS.join(","));
+      res.setHeader("Access-Control-Max-Age", "86400");
+    }
+    return res.status(204).end();
   }
 
-  if (isVercelOrigin(normalized)) {
+  next();
+};
+
+export const corsOriginChecker = (origin, callback) => {
+  if (!origin || isOriginAllowed(origin)) {
     return callback(null, true);
   }
 
@@ -62,4 +82,5 @@ export const corsOptions = {
   methods: ALLOWED_METHODS,
   allowedHeaders: ALLOWED_HEADERS,
   optionsSuccessStatus: 204,
+  preflightContinue: false,
 };
