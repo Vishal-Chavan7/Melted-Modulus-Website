@@ -60,7 +60,7 @@ export const applyCors = (req, res, next) => {
     if (allowed && origin) {
       res.setHeader("Access-Control-Allow-Methods", ALLOWED_METHODS.join(","));
       res.setHeader("Access-Control-Allow-Headers", ALLOWED_HEADERS.join(","));
-      res.setHeader("Access-Control-Max-Age", "86400");
+      res.setHeader("Access-Control-Max-Age", "0");
     }
     return res.status(204).end();
   }

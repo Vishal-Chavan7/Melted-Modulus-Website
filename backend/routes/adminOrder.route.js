@@ -21,6 +21,12 @@ router
 
 router
   .route("/admin/orders/:id/status")
+  .put(
+    authMiddleware,
+    authorizeRole("admin"),
+    validateMiddleware(updateOrderStatusSchema),
+    updateOrderStatus,
+  )
   .patch(
     authMiddleware,
     authorizeRole("admin"),

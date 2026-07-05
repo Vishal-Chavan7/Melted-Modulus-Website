@@ -405,7 +405,7 @@ export const adminApi = {
   updateOrderStatus: async (orderId, orderStatus) =>
     normalizeOrder(
       await apiRequest(`/admin/orders/${orderId}/status`, {
-        method: 'PATCH',
+        method: 'PUT',
         body: JSON.stringify({ orderStatus }),
       }),
     ),
