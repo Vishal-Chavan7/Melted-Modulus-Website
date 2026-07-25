@@ -64,10 +64,6 @@ export const Hero = () => {
               Free Shipping on ₹2,000+
             </div>
             <div className="hero__trust-item">
-              <span className="hero__trust-icon"><HiOutlineCube aria-hidden="true" /></span>
-              500+ Unique Products
-            </div>
-            <div className="hero__trust-item">
               <span className="hero__trust-icon"><HiOutlinePaintBrush aria-hidden="true" /></span>
               Made-to-Order Custom Prints
             </div>

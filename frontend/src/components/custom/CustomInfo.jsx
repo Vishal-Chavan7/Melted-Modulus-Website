@@ -21,7 +21,6 @@ export const CustomInfo = () => {
         <InfoHeading icon={HiOutlineCube}>What We Can Print</InfoHeading>
         <ul>
           <li>Prototypes & functional parts</li>
-          <li>Cosplay props & armor</li>
           <li>Personalized gifts & decor</li>
           <li>Replacement parts & brackets</li>
           <li>Miniatures & figurines</li>
@@ -35,8 +34,6 @@ export const CustomInfo = () => {
           <li>Free consultation & quote</li>
           <li>Turnaround: 3-7 business days</li>
           <li>Max print size: 256×256×256 mm</li>
-          <li>Layer accuracy: 0.1mm – 0.3mm</li>
-          <li>3 materials available</li>
           <li>Post-processing included</li>
         </ul>
       </div>

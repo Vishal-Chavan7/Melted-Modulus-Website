@@ -12,20 +12,12 @@ export const ContactPage = () => {
       answer: "We ship pan-India via BlueDart and DTDC. Standard shipping (5-7 days) is free on orders above ₹2,000. Express shipping (2-3 days) is available at ₹199. We'll send you a tracking link once your order ships."
     },
     {
-      question: "What is your return policy?",
-      answer: "We offer a 7-day return policy for defective or damaged items. Custom orders are non-refundable but we'll reprint at no charge if there's a quality issue. Contact us with photos of any issues and we'll resolve it within 24 hours."
-    },
-    {
       question: "Do you offer bulk/wholesale pricing?",
       answer: "Yes! Orders of 10+ units qualify for 10% off. For 50+ units, we offer custom wholesale pricing. Contact us with your requirements and we'll prepare a quote tailored to your volume."
     },
     {
       question: "Can I track my order?",
       answer: "Absolutely. Once your order ships, you'll receive an email with a tracking number and link. You can also check order status by contacting us with your order ID via email or phone."
-    },
-    {
-      question: "Do you ship internationally?",
-      answer: "Currently, we ship within India only. International shipping is coming soon! Join our newsletter to be the first to know when we expand globally."
     }
   ];
 

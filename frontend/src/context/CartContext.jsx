@@ -84,11 +84,6 @@ export const CartProvider = ({ children }) => {
 
     const loadCart = async () => {
       if (!isMounted) return;
-
-      if (isLoggedIn) {
-        setItems([]);
-      }
-
       await reloadCart();
     };
 

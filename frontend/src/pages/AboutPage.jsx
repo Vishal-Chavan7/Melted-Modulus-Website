@@ -13,7 +13,7 @@ export const AboutPage = () => {
         label="Our Story"
         titlePrefix="About"
         titleHighlight="MeltedModulus"
-        description="Where ideas take shape — one layer at a time. We're a team of makers, designers, and engineers on a mission to democratize 3D printing."
+        description="Where ideas take shape — one layer at a time. Built by a maker, for makers. We're on a mission to make professional 3D printing accessible to everyone in India."
       />
 
       <OurStory />

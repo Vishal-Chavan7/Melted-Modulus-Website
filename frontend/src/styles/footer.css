@@ -121,6 +121,19 @@
   transform: translateX(4px);
 }
 
+.footer__link-icon {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: var(--transition-fast);
+}
+
+.footer__link:hover .footer__link-icon {
+  opacity: 1;
+  color: var(--clr-brand-light);
+}
+
 /* Bottom Bar */
 .footer__bottom {
   padding-top: var(--space-8);

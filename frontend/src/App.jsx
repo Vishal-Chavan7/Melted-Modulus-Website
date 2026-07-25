@@ -58,7 +58,7 @@ function App() {
           <Route
             path="/account"
             element={
-              <RequireAuth redirectTo="/account/profile">
+              <RequireAuth>
                 <AccountLayout />
               </RequireAuth>
             }

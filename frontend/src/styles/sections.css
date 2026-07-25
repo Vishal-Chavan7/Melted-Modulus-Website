@@ -185,6 +185,12 @@
   gap: var(--space-6);
 }
 
+.education__materials-grid--single {
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
 /* ---- Section: Why Choose Us ---- */
 .why-us {
   background: var(--gradient-section);

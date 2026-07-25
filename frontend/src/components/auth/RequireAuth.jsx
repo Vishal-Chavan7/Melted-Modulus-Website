@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { setAuthRedirect } from '../../utils/authRedirect';
 
-export const RequireAuth = ({ children, redirectTo }) => {
+export const RequireAuth = ({ children }) => {
   const { isLoggedIn, openAuthModal } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLoggedIn) {
-      setAuthRedirect(redirectTo);
+      setAuthRedirect(location.pathname);
       openAuthModal();
     }
-  }, [isLoggedIn, openAuthModal, redirectTo]);
+  }, [isLoggedIn, openAuthModal, location.pathname]);
 
   if (!isLoggedIn) {
     return (

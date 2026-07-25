@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaInstagram, FaXTwitter, FaYoutube, FaDiscord } from 'react-icons/fa6';
+import { HiOutlineArrowRight } from 'react-icons/hi2';
 
 export const Footer = () => {
   return (
@@ -12,50 +13,36 @@ export const Footer = () => {
               <img src="/assets/images/logo.png" alt="MeltedModulus" />
               <span className="footer__brand-name"><span>Melted</span>Modulus</span>
             </Link>
-            <p className="footer__brand-desc">Where ideas take shape. Premium 3D-printed products, custom designs, and maker supplies — crafted layer by layer with precision and passion.</p>
+            <p className="footer__brand-desc">Where ideas take shape — one layer at a time. Premium 3D-printed products and custom prints crafted with precision and passion.</p>
             <div className="footer__social">
-              <a href="#" className="footer__social-link" aria-label="Instagram">
-                <FaInstagram aria-hidden="true" />
-              </a>
-              <a href="#" className="footer__social-link" aria-label="Twitter / X">
-                <FaXTwitter aria-hidden="true" />
-              </a>
-              <a href="#" className="footer__social-link" aria-label="YouTube">
-                <FaYoutube aria-hidden="true" />
-              </a>
-              <a href="#" className="footer__social-link" aria-label="Discord">
-                <FaDiscord aria-hidden="true" />
-              </a>
+              <a href="#" className="footer__social-link" aria-label="Instagram"><FaInstagram aria-hidden="true" /></a>
+              <a href="#" className="footer__social-link" aria-label="Twitter / X"><FaXTwitter aria-hidden="true" /></a>
+              <a href="#" className="footer__social-link" aria-label="YouTube"><FaYoutube aria-hidden="true" /></a>
+              <a href="#" className="footer__social-link" aria-label="Discord"><FaDiscord aria-hidden="true" /></a>
             </div>
           </div>
 
           <div className="footer__column">
             <h4>Shop</h4>
             <div className="footer__links">
-              <Link to="/products" className="footer__link">All Products</Link>
-              <Link to="/custom" className="footer__link">Custom Prints</Link>
-              <Link to="/products?new=true" className="footer__link">New Arrivals</Link>
-              <Link to="/products?sale=true" className="footer__link">Sale</Link>
+              <Link to="/products" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />All Products</Link>
+              <Link to="/custom" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Custom Prints</Link>
             </div>
           </div>
 
           <div className="footer__column">
             <h4>Company</h4>
             <div className="footer__links">
-              <Link to="/about" className="footer__link">About Us</Link>
-              <Link to="/about#story" className="footer__link">Our Story</Link>
-              <a href="#" className="footer__link">Blog</a>
-              <a href="#" className="footer__link">Careers</a>
+              <Link to="/about" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />About Us</Link>
+              <a href="#" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Legals</a>
             </div>
           </div>
 
           <div className="footer__column">
             <h4>Support</h4>
             <div className="footer__links">
-              <a href="#" className="footer__link">Help Center</a>
-              <a href="#" className="footer__link">Shipping Info</a>
-              <a href="#" className="footer__link">Returns</a>
-              <Link to="/contact" className="footer__link">Contact Us</Link>
+              <a href="#" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Help Center</a>
+              <a href="#" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Shipping Info</a>
             </div>
           </div>
         </div>

@@ -10,20 +10,12 @@ import { SectionHeader } from '../components/common/SectionHeader';
 export const CustomPage = () => {
   const customFaqs = [
     {
-      question: "What file formats do you accept?",
-      answer: "We accept STL, OBJ, 3MF, and STEP files. If you don't have a 3D model file, no worries — just describe your idea with reference images and our design team can create the model for you (design fee may apply)."
-    },
-    {
-      question: "How much does custom printing cost?",
-      answer: "Pricing depends on the size, material, complexity, and quantity. Simple items start at ₹300-500, while larger or complex pieces can range from ₹2,000-10,000+. We always provide a detailed quote before proceeding."
+      question: "What file formats or images do you accept?",
+      answer: "You can share JPG, PNG, or other image files as reference for your custom print. If you have a 3D model file, we also accept STL, OBJ, and 3MF. Don't have a file? Just describe your idea and our team will take care of the design for you."
     },
     {
       question: "How long does it take?",
       answer: "Standard orders are completed in 3-7 business days. Rush orders (1-2 days) are available at an additional cost. Design work (if needed) adds 2-3 days. We'll provide an exact timeline with your quote."
-    },
-    {
-      question: "What materials can I choose from?",
-      answer: "We offer PLA (biodegradable, vibrant colors), PETG (strong, chemical resistant), and TPU (flexible, elastic). Our team can recommend the best material for your specific use case."
     },
     {
       question: "Can I get a prototype before a bulk order?",

@@ -81,6 +81,36 @@
   margin-bottom: var(--space-4);
 }
 
+/* Color Palette Picker */
+.color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+  position: relative;
+}
+
+.color-swatch:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.15);
+}
+
+.color-swatch--active {
+  border-color: var(--clr-brand-light);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.35);
+}
+
 .custom-info {
   position: sticky;
   top: calc(var(--navbar-height) + var(--space-6));
@@ -220,6 +250,13 @@
   grid-template-columns: 1fr 1fr;
   gap: var(--space-12);
   align-items: center;
+}
+
+.about-story--centered {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .about-story__content h3 {
@@ -372,6 +409,12 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-8);
+}
+
+.team-grid--single {
+  grid-template-columns: 1fr;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .team-card {

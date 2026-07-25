@@ -78,14 +78,6 @@ export const FilterSidebar = ({ isOpen, onClose, filters, setFilters, categories
           <input type="checkbox" name="material" value="PLA" checked={filters.materials.includes('PLA')} onChange={handleMaterialChange} />
           PLA
         </label>
-        <label className="filter-option">
-          <input type="checkbox" name="material" value="PETG" checked={filters.materials.includes('PETG')} onChange={handleMaterialChange} />
-          PETG
-        </label>
-        <label className="filter-option">
-          <input type="checkbox" name="material" value="TPU" checked={filters.materials.includes('TPU')} onChange={handleMaterialChange} />
-          TPU
-        </label>
       </div>
 
       <div className="filter-group">
@@ -95,20 +87,20 @@ export const FilterSidebar = ({ isOpen, onClose, filters, setFilters, categories
           All Prices
         </label>
         <label className="filter-option">
-          <input type="radio" name="price" value="0-1000" checked={filters.price === '0-1000'} onChange={handlePriceChange} />
-          Under ₹1,000
+          <input type="radio" name="price" value="100-500" checked={filters.price === '100-500'} onChange={handlePriceChange} />
+          ₹100 – ₹500
         </label>
         <label className="filter-option">
-          <input type="radio" name="price" value="1000-2500" checked={filters.price === '1000-2500'} onChange={handlePriceChange} />
-          ₹1,000 – ₹2,500
+          <input type="radio" name="price" value="500-1500" checked={filters.price === '500-1500'} onChange={handlePriceChange} />
+          ₹500 – ₹1,500
         </label>
         <label className="filter-option">
-          <input type="radio" name="price" value="2500-5000" checked={filters.price === '2500-5000'} onChange={handlePriceChange} />
-          ₹2,500 – ₹5,000
+          <input type="radio" name="price" value="1500-3000" checked={filters.price === '1500-3000'} onChange={handlePriceChange} />
+          ₹1,500 – ₹3,000
         </label>
         <label className="filter-option">
-          <input type="radio" name="price" value="5000+" checked={filters.price === '5000+'} onChange={handlePriceChange} />
-          ₹5,000+
+          <input type="radio" name="price" value="3000-5000" checked={filters.price === '3000-5000'} onChange={handlePriceChange} />
+          ₹3,000 – ₹5,000
         </label>
       </div>
     </aside>

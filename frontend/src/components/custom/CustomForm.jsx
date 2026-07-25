@@ -17,6 +17,21 @@ export const CustomForm = () => {
     color: '',
   });
 
+  const COLOR_PALETTE = [
+    { label: 'Black',   hex: '#111111' },
+    { label: 'White',   hex: '#F5F5F5' },
+    { label: 'Red',     hex: '#E53E3E' },
+    { label: 'Blue',    hex: '#3B82F6' },
+    { label: 'Green',   hex: '#10B981' },
+    { label: 'Yellow',  hex: '#F59E0B' },
+    { label: 'Orange',  hex: '#F97316' },
+    { label: 'Pink',    hex: '#EC4899' },
+    { label: 'Purple',  hex: '#8B5CF6' },
+    { label: 'Gold',    hex: '#D97706' },
+    { label: 'Beige',   hex: '#D4B896' },
+    { label: 'Grey',    hex: '#6B7280' },
+  ];
+
   const handleChange = (field) => (e) => {
     const value = field === 'quantity' ? Number(e.target.value) : e.target.value;
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -141,29 +156,24 @@ export const CustomForm = () => {
             >
               <option value="">Not Sure — Recommend me</option>
               <option value="PLA">PLA — Easy to print, vibrant colors</option>
-              <option value="PETG">PETG — Strong, chemical resistant</option>
-              <option value="TPU">TPU — Flexible, elastic</option>
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="custom-color">Color Preference</label>
-            <select
-              className="form-input"
-              id="custom-color"
-              value={form.color}
-              onChange={handleChange('color')}
-            >
-              <option value="">Select a color</option>
-              <option value="Black">Black</option>
-              <option value="White">White</option>
-              <option value="Red">Red</option>
-              <option value="Blue">Blue</option>
-              <option value="Gold">Gold</option>
-              <option value="Orange">Orange</option>
-              <option value="Yellow">Yellow</option>
-              <option value="Pink">Pink</option>
-              <option value="Beige">Beige</option>
-            </select>
+            <label className="form-label">Color Preference{form.color && <span style={{ marginLeft: 'var(--space-2)', color: 'var(--clr-text-muted)' }}>— {form.color}</span>}</label>
+            <div className="color-palette">
+              {COLOR_PALETTE.map(({ label, hex }) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={`color-swatch${form.color === label ? ' color-swatch--active' : ''}`}
+                  style={{ background: hex }}
+                  title={label}
+                  aria-label={label}
+                  aria-pressed={form.color === label}
+                  onClick={() => setForm(prev => ({ ...prev, color: prev.color === label ? '' : label }))}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <div className="form-group">

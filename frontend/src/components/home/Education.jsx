@@ -50,7 +50,7 @@ export const Education = () => {
           <p className="text-muted">Choosing the right material for every project</p>
         </ScrollReveal>
 
-        <div className="education__materials-grid">
+        <div className="education__materials-grid education__materials-grid--single">
           <ScrollReveal className="card-material" delay={1}>
             <div className="card-material__dot" style={{ background: 'rgba(16, 185, 129, 0.2)' }}>
               <HiOutlineGlobeAlt size={24} aria-hidden="true" />
@@ -58,24 +58,6 @@ export const Education = () => {
             <h4 className="card-material__name">PLA</h4>
             <p className="card-material__props">Biodegradable • Easy to print • Vibrant colors</p>
             <span className="card-material__use">Best for: Decorative items, prototypes</span>
-          </ScrollReveal>
-
-          <ScrollReveal className="card-material" delay={2}>
-            <div className="card-material__dot" style={{ background: 'rgba(59, 130, 246, 0.2)' }}>
-              <HiOutlineShieldCheck size={24} aria-hidden="true" />
-            </div>
-            <h4 className="card-material__name">PETG</h4>
-            <p className="card-material__props">Strong • Chemical resistant • All-rounder</p>
-            <span className="card-material__use">Best for: Mechanical parts, outdoor use</span>
-          </ScrollReveal>
-
-          <ScrollReveal className="card-material" delay={3}>
-            <div className="card-material__dot" style={{ background: 'rgba(0, 191, 166, 0.2)' }}>
-              <HiOutlineArrowsPointingOut size={24} aria-hidden="true" />
-            </div>
-            <h4 className="card-material__name">TPU</h4>
-            <p className="card-material__props">Flexible • Elastic • Abrasion-resistant</p>
-            <span className="card-material__use">Best for: Phone cases, gaskets, wearables</span>
           </ScrollReveal>
         </div>
       </div>

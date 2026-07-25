@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import productsData from '../assets/data/products.json';
 import { productApi } from '../services/api';
 
 export const useProducts = () => {
@@ -15,12 +14,12 @@ export const useProducts = () => {
       try {
         const backendProducts = await productApi.getAll();
         if (!isMounted) return;
-        setProducts(backendProducts.length ? backendProducts : productsData);
+        setProducts(backendProducts);
         setError('');
       } catch (err) {
         if (!isMounted) return;
         console.error('Failed to load backend products:', err);
-        setProducts(productsData);
+        setProducts([]);
         setError(err.message);
       } finally {
         if (isMounted) {
