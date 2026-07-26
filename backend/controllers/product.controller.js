@@ -4,13 +4,15 @@ import ApiResponse from "../utils/ApiResponse.js";
 import Product from "../models/product.model.js";
 import Category from "../models/category.model.js";
 import slugify from "slugify";
+import { parseExistingImages } from "../middlewares/upload.middleware.js";
 import {
-  getUploadedImagePaths,
-  parseExistingImages,
-} from "../middlewares/upload.middleware.js";
+  deleteCloudinaryImages,
+  getRemovedCloudinaryImages,
+  uploadProductImagesToCloudinary,
+} from "../utils/cloudinaryUpload.js";
 
-const buildProductImages = (req) => {
-  const uploadedImages = getUploadedImagePaths(req.files);
+const buildProductImages = async (req) => {
+  const uploadedImages = await uploadProductImagesToCloudinary(req.files);
   const existingImages = parseExistingImages(req.body.existingImages);
   return [...existingImages, ...uploadedImages];
 };
@@ -18,7 +20,7 @@ const buildProductImages = (req) => {
 const createProduct = asyncHandler(async (req, res) => {
   const { name, description, material, price, category, inventoryQuantity, sku, isActive } = req.body;
   const userId = req.user._id;
-  const images = buildProductImages(req);
+  const images = await buildProductImages(req);
 
   if (images.length === 0) {
     throw new ApiError(400, "At least one product image is required");
@@ -97,13 +99,19 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   const hasNewImages = req.files?.length > 0 || req.body.existingImages !== undefined;
   if (hasNewImages) {
-    const images = buildProductImages(req);
+    const previousImages = [...product.images];
+    const images = await buildProductImages(req);
+
     if (images.length === 0) {
       throw new ApiError(400, "At least one product image is required");
     }
     if (images.length > 5) {
       throw new ApiError(400, "Maximum 5 images are allowed");
     }
+
+    const removedImages = getRemovedCloudinaryImages(previousImages, images);
+    await deleteCloudinaryImages(removedImages);
+
     product.images = images;
   }
 
@@ -156,6 +164,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Product not found");
   }
 
+  await deleteCloudinaryImages(product.images);
   await product.deleteOne();
 
   return res
