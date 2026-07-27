@@ -295,3 +295,24 @@
     padding: 0 var(--space-3);
   }
 }
+
+/* ---- Homepage Transparent Navbar Overrides ---- */
+.navbar.navbar--home:not(.scrolled) .navbar__logo-text,
+.navbar.navbar--home:not(.scrolled) .navbar__link,
+.navbar.navbar--home:not(.scrolled) .navbar__cart-btn,
+.navbar.navbar--home:not(.scrolled) .theme-toggle {
+  color: #F0F0F0;
+}
+
+.navbar.navbar--home:not(.scrolled) .theme-toggle {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar.navbar--home:not(.scrolled) .btn-secondary {
+  color: #F0F0F0;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.navbar.navbar--home:not(.scrolled) .navbar__toggle span {
+  background: #F0F0F0;
+}

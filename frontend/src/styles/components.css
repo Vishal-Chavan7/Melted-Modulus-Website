@@ -40,7 +40,7 @@
 /* Primary Button */
 .btn-primary {
   background: var(--gradient-brand);
-  color: var(--clr-text-primary);
+  color: #FFFFFF;
   box-shadow: 0 4px 20px rgba(162, 89, 255, 0.3);
 }
 
@@ -282,6 +282,7 @@
 
 .card-feature__content {
   padding: var(--space-8);
+  box-sizing: border-box;
 }
 
 .card-feature__content h3 {
@@ -292,6 +293,13 @@
 .card-feature__content p {
   margin-bottom: var(--space-6);
   line-height: var(--lh-relaxed);
+}
+
+.card-feature__content .btn {
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  text-align: center;
 }
 
 /* ---- Badges ---- */

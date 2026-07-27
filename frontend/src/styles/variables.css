@@ -105,14 +105,14 @@
   --clr-navbar-scrolled-bg: rgba(255, 255, 255, 0.88);
   --clr-mobile-menu-bg: rgba(255, 255, 255, 0.98);
   --clr-overlay: rgba(15, 23, 42, 0.45);
-  --clr-hero-image-filter: brightness(0.92) saturate(1.05);
+  --clr-hero-image-filter: brightness(0.7) saturate(1.1);
 
   --gradient-hero: linear-gradient(180deg, rgba(247,246,251,0) 0%, rgba(247,246,251,0.85) 60%, #F7F6FB 100%);
   --gradient-section: linear-gradient(180deg, #F7F6FB 0%, #FFFFFF 50%, #F7F6FB 100%);
   --gradient-hero-overlay:
-    linear-gradient(180deg, rgba(247, 246, 251, 0.15) 0%, rgba(247, 246, 251, 0.75) 50%, #F7F6FB 100%),
-    radial-gradient(ellipse at 30% 40%, rgba(162, 89, 255, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 60%, rgba(0, 191, 166, 0.08) 0%, transparent 60%);
+    linear-gradient(180deg, rgba(13, 13, 30, 0.2) 0%, rgba(13, 13, 30, 0.6) 100%),
+    radial-gradient(ellipse at 30% 40%, rgba(162, 89, 255, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 60%, rgba(0, 191, 166, 0.1) 0%, transparent 60%);
 
   --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
   --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);

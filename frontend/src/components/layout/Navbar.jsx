@@ -76,10 +76,12 @@ export const Navbar = () => {
 
   const dropdownItemClass = 'user-menu__dropdown-item user-menu__dropdown-item--icon';
 
+  const isHomePage = location.pathname === '/';
+
   return (
-    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`} id="navbar">
+    <nav className={`navbar ${isScrolled ? 'scrolled' : ''} ${isHomePage ? 'navbar--home' : ''}`} id="navbar">
       <div className="navbar__inner">
-        <Link to="/" className="navbar__logo">
+        <Link to="/" className="navbar__logo" onClick={() => setIsMobileMenuOpen(false)}>
           <img src={logo} alt="MeltedModulus" className="navbar__logo-img" />
           <span className="navbar__logo-text"><span>Melted</span>Modulus</span>
         </Link>

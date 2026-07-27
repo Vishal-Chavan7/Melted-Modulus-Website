@@ -34,12 +34,13 @@ export const CustomPage = () => {
 
       <CustomSteps />
 
-      <section>
+      <section id="custom-form" style={{ paddingTop: 'var(--space-4)' }}>
         <div className="container">
           <SectionHeader 
             label="Get Started"
             title="Request a "
             titleHighlight="Custom Quote"
+            titleFirst={true}
           />
 
           <div className="custom-form-section">
@@ -55,6 +56,7 @@ export const CustomPage = () => {
             label="FAQ"
             title="Common "
             titleHighlight="Questions"
+            titleFirst={true}
           />
           <FaqAccordion faqs={customFaqs} />
         </div>

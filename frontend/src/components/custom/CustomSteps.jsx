@@ -12,6 +12,7 @@ export const CustomSteps = () => {
           title="How It "
           titleHighlight="Works"
           description="Getting your custom 3D print is simple — just three steps."
+          titleFirst={true}
         />
 
         <div className="custom-steps">

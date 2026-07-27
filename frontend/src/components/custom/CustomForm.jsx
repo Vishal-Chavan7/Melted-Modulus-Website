@@ -17,21 +17,6 @@ export const CustomForm = () => {
     color: '',
   });
 
-  const COLOR_PALETTE = [
-    { label: 'Black',   hex: '#111111' },
-    { label: 'White',   hex: '#F5F5F5' },
-    { label: 'Red',     hex: '#E53E3E' },
-    { label: 'Blue',    hex: '#3B82F6' },
-    { label: 'Green',   hex: '#10B981' },
-    { label: 'Yellow',  hex: '#F59E0B' },
-    { label: 'Orange',  hex: '#F97316' },
-    { label: 'Pink',    hex: '#EC4899' },
-    { label: 'Purple',  hex: '#8B5CF6' },
-    { label: 'Gold',    hex: '#D97706' },
-    { label: 'Beige',   hex: '#D4B896' },
-    { label: 'Grey',    hex: '#6B7280' },
-  ];
-
   const handleChange = (field) => (e) => {
     const value = field === 'quantity' ? Number(e.target.value) : e.target.value;
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -85,7 +70,7 @@ export const CustomForm = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="custom-name">Full Name *</label>
+            <label className="form-label" htmlFor="custom-name" style={{ color: 'white' }}>Full Name</label>
             <input
               type="text"
               className="form-input"
@@ -97,7 +82,7 @@ export const CustomForm = () => {
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="custom-email">Email *</label>
+            <label className="form-label" htmlFor="custom-email" style={{ color: 'white' }}>Email</label>
             <input
               type="email"
               className="form-input"
@@ -111,7 +96,7 @@ export const CustomForm = () => {
         </div>
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="custom-phone">Phone</label>
+            <label className="form-label" htmlFor="custom-phone" style={{ color: 'white' }}>Phone</label>
             <input
               type="tel"
               className="form-input"
@@ -122,7 +107,7 @@ export const CustomForm = () => {
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="custom-qty">Quantity</label>
+            <label className="form-label" htmlFor="custom-qty" style={{ color: 'white' }}>Quantity</label>
             <input
               type="number"
               className="form-input"
@@ -135,7 +120,7 @@ export const CustomForm = () => {
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label" htmlFor="custom-desc">Project Description *</label>
+          <label className="form-label" htmlFor="custom-desc" style={{ color: 'white' }}>Project Description</label>
           <textarea
             className="form-textarea"
             id="custom-desc"
@@ -147,7 +132,7 @@ export const CustomForm = () => {
         </div>
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="custom-material">Material Preference</label>
+            <label className="form-label" htmlFor="custom-material" style={{ color: 'white' }}>Material Preference</label>
             <select
               className="form-input"
               id="custom-material"
@@ -159,25 +144,67 @@ export const CustomForm = () => {
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Color Preference{form.color && <span style={{ marginLeft: 'var(--space-2)', color: 'var(--clr-text-muted)' }}>— {form.color}</span>}</label>
-            <div className="color-palette">
-              {COLOR_PALETTE.map(({ label, hex }) => (
-                <button
-                  key={label}
-                  type="button"
-                  className={`color-swatch${form.color === label ? ' color-swatch--active' : ''}`}
-                  style={{ background: hex }}
-                  title={label}
-                  aria-label={label}
-                  aria-pressed={form.color === label}
-                  onClick={() => setForm(prev => ({ ...prev, color: prev.color === label ? '' : label }))}
-                />
-              ))}
+            <label className="form-label" style={{ color: 'white' }}>Color Preference</label>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <input 
+                type="text" 
+                className="form-input"
+                value={form.color}
+                onChange={handleChange('color')}
+                placeholder="e.g., Light Blue, Matte Black..."
+                required
+                style={{ flex: 1 }}
+              />
+              <input
+                type="color"
+                value={/^#[0-9A-F]{6}$/i.test(form.color) ? form.color : '#00bfa6'}
+                onChange={(e) => {
+                  const hex = e.target.value;
+                  const basicColors = {
+                    '#ff0000': 'Red', '#00ff00': 'Green', '#0000ff': 'Blue', '#ffff00': 'Yellow',
+                    '#ffa500': 'Orange', '#800080': 'Purple', '#ffc0cb': 'Pink', '#000000': 'Black',
+                    '#ffffff': 'White', '#808080': 'Grey', '#a52a2a': 'Brown', '#00ffff': 'Cyan',
+                    '#ff00ff': 'Magenta', '#000080': 'Navy', '#008080': 'Teal', '#808000': 'Olive',
+                    '#800000': 'Maroon', '#ffd700': 'Gold', '#c0c0c0': 'Silver', '#00bfa6': 'Teal'
+                  };
+                  
+                  // Simple closest color match
+                  const hexToRgb = (h) => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+                  const rgb = hexToRgb(hex);
+                  
+                  let closest = hex;
+                  let minDistance = Infinity;
+                  
+                  Object.entries(basicColors).forEach(([cHex, name]) => {
+                    const cRgb = hexToRgb(cHex);
+                    const distance = Math.sqrt(
+                      Math.pow(cRgb[0] - rgb[0], 2) + Math.pow(cRgb[1] - rgb[1], 2) + Math.pow(cRgb[2] - rgb[2], 2)
+                    );
+                    if (distance < minDistance) {
+                      minDistance = distance;
+                      closest = name;
+                    }
+                  });
+                  
+                  setForm(prev => ({ ...prev, color: closest }));
+                }}
+                title="Choose a specific color"
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  padding: '0',
+                  border: 'none',
+                  borderRadius: 'var(--radius-sm)',
+                  cursor: 'pointer',
+                  background: 'none',
+                  flexShrink: 0
+                }}
+              />
             </div>
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Reference Images</label>
+          <label className="form-label" style={{ color: 'white' }}>Reference Images</label>
           <div className="file-upload-disabled">
             <p style={{ color: 'var(--clr-text-muted)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', justifyContent: 'center' }}>
               <HiOutlinePaperClip aria-hidden="true" /> Drag & drop files here or click to upload

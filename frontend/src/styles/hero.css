@@ -286,3 +286,19 @@
   51% { transform: scaleY(1); transform-origin: bottom; }
   100% { transform: scaleY(0); transform-origin: bottom; }
 }
+
+/* Light mode overrides for Hero (dark overlay requires light text) */
+[data-theme="light"] .hero__title,
+[data-theme="light"] .hero__subtitle,
+[data-theme="light"] .hero__trust-item {
+  color: #F0F0F0;
+}
+
+[data-theme="light"] .hero__trust {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="light"] .hero__trust-icon {
+  color: var(--clr-accent);
+}
+

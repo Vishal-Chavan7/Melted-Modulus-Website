@@ -26,7 +26,7 @@ export const Footer = () => {
             <h4>Shop</h4>
             <div className="footer__links">
               <Link to="/products" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />All Products</Link>
-              <Link to="/custom" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Custom Prints</Link>
+              <Link to="/custom#custom-form" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Custom Prints</Link>
             </div>
           </div>
 
@@ -34,35 +34,26 @@ export const Footer = () => {
             <h4>Company</h4>
             <div className="footer__links">
               <Link to="/about" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />About Us</Link>
-              <a href="#" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Legals</a>
+              <Link to="/legal" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Legals</Link>
             </div>
           </div>
 
           <div className="footer__column">
             <h4>Support</h4>
             <div className="footer__links">
-              <a href="#" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Help Center</a>
-              <a href="#" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Shipping Info</a>
+              <Link to="/help" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Help Center</Link>
+              <Link to="/shipping" className="footer__link"><HiOutlineArrowRight className="footer__link-icon" aria-hidden="true" />Shipping Info</Link>
             </div>
           </div>
         </div>
 
         <div className="footer__bottom">
-          <p className="footer__copy">© 2026 MeltedModulus. All rights reserved.</p>
-
-          <div className="footer__legal">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Shipping Policy</a>
-          </div>
-
           <div className="footer__payment">
             <span className="footer__payment-label">We accept:</span>
-            <div className="footer__payment-icon">VISA</div>
-            <div className="footer__payment-icon">MC</div>
             <div className="footer__payment-icon">UPI</div>
-            <div className="footer__payment-icon">GPay</div>
           </div>
+
+          <p className="footer__copy">© 2026 MeltedModulus. All rights reserved.</p>
         </div>
       </div>
     </footer>

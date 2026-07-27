@@ -22,9 +22,12 @@ export const AdminHeader = ({ onLogout, onMenuToggle, menuOpen }) => {
           <span className="admin-topbar__subtitle">Store management</span>
         </div>
       </div>
-      <div className="admin-topbar__actions">
+      <div className="admin-topbar__actions" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
         <span className="admin-topbar__user">{currentUser?.email}</span>
-        <button type="button" className="btn btn-secondary btn-sm" onClick={onLogout}>
+        <a href="/" target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+          View Site
+        </a>
+        <button type="button" className="btn btn-primary btn-sm" onClick={onLogout}>
           Logout
         </button>
       </div>

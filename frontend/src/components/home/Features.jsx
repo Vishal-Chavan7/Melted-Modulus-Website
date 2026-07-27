@@ -5,7 +5,7 @@ import { ScrollReveal } from '../common/ScrollReveal';
 
 export const Features = () => {
   return (
-    <section className="features" id="features">
+    <section className="features" id="features" style={{ paddingTop: 'var(--space-4)' }}>
       <div className="container">
         <SectionHeader 
           label="What We Offer"
@@ -38,7 +38,7 @@ export const Features = () => {
               <span className="badge badge-accent" style={{ fontSize: '0.7rem', padding: '0.2rem 0.65rem' }}>Made for You</span>
               <h3 style={{ marginTop: 'var(--space-3)' }}>Custom Prints</h3>
               <p>Bring your ideas to life. Describe your concept or share your reference images — we'll design and print it in your choice of material, color, and finish. From prototypes to personalized gifts, we make it real.</p>
-              <Link to="/custom" className="btn btn-accent">Start Your Custom Order →</Link>
+              <Link to="/custom#custom-form" className="btn btn-secondary">Get a Custom Quote →</Link>
             </div>
           </ScrollReveal>
         </div>

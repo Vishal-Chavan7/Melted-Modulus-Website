@@ -146,8 +146,29 @@
   }
 
   .product-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .card-product__image {
+    height: 140px;
+  }
+
+  .card-product__body {
+    padding: var(--space-3);
+  }
+
+  .card-product__title {
+    font-size: var(--fs-small);
+  }
+
+  .card-product__footer {
+    padding: var(--space-2) var(--space-3);
+  }
+  
+  .card-product__footer .btn {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--fs-xs);
   }
 
   .products-controls {

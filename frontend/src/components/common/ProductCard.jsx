@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { HiStar, HiOutlineStar, HiOutlineHeart, HiHeart } from 'react-icons/hi2';
 import { formatPrice, generateStars } from '../../utils/helpers';
 import { useCart } from '../../context/CartContext';
@@ -53,45 +54,53 @@ export const ProductCard = ({ product }) => {
     }
   };
 
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem(product);
+  };
+
   return (
     <div className="card-product">
-      <div className="card-product__image">
-        {product.badge && (
-          <span 
-            className={`badge ${getBadgeClass(product.badge)}`} 
-            style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 2 }}
-          >
-            {product.badge}
-          </span>
-        )}
-        <button
-          type="button"
-          className={`card-product__wishlist ${saved ? 'active' : ''}`}
-          onClick={handleWishlist}
-          aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          {saved ? <HiHeart aria-hidden="true" /> : <HiOutlineHeart aria-hidden="true" />}
-        </button>
-        <img src={product.image} alt={product.name} loading="lazy" />
-      </div>
-      <div className="card-product__body">
-        <span className="card-product__category">{product.category}</span>
-        <h4 className="card-product__title">{product.name}</h4>
-        <div className="stars">
-          {stars.map((star, index) => renderStar(star, index))}
-          <span style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--fs-xs)', marginLeft: '4px' }}>
-            ({product.reviews})
-          </span>
-        </div>
-        <div className="card-product__price">
-          {formatPrice(product.price)}
-          {product.originalPrice && (
-            <span style={{ textDecoration: 'line-through', color: 'var(--clr-text-muted)', fontSize: 'var(--fs-small)', fontWeight: 'var(--fw-regular)', marginLeft: 'var(--space-2)' }}>
-              {formatPrice(product.originalPrice)}
+      <Link to={`/products/${product.id || product._id}`} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+        <div className="card-product__image">
+          {product.badge && (
+            <span 
+              className={`badge ${getBadgeClass(product.badge)}`} 
+              style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 2 }}
+            >
+              {product.badge}
             </span>
           )}
+          <button
+            type="button"
+            className={`card-product__wishlist ${saved ? 'active' : ''}`}
+            onClick={handleWishlist}
+            aria-label={saved ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            {saved ? <HiHeart aria-hidden="true" /> : <HiOutlineHeart aria-hidden="true" />}
+          </button>
+          <img src={product.image} alt={product.name} loading="lazy" />
         </div>
-      </div>
+        <div className="card-product__body">
+          <span className="card-product__category">{product.category}</span>
+          <h4 className="card-product__title">{product.name}</h4>
+          <div className="stars">
+            {stars.map((star, index) => renderStar(star, index))}
+            <span style={{ color: 'var(--clr-text-muted)', fontSize: 'var(--fs-xs)', marginLeft: '4px' }}>
+              ({product.reviews})
+            </span>
+          </div>
+          <div className="card-product__price">
+            {formatPrice(product.price)}
+            {product.originalPrice && (
+              <span style={{ textDecoration: 'line-through', color: 'var(--clr-text-muted)', fontSize: 'var(--fs-small)', fontWeight: 'var(--fw-regular)', marginLeft: 'var(--space-2)' }}>
+                {formatPrice(product.originalPrice)}
+              </span>
+            )}
+          </div>
+        </div>
+      </Link>
       <div className="card-product__footer">
         <span className="text-mono" style={{ fontSize: 'var(--fs-xs)', color: 'var(--clr-text-muted)' }}>
           {product.material}
@@ -99,7 +108,7 @@ export const ProductCard = ({ product }) => {
         <button 
           className="btn btn-primary btn-sm add-to-cart-btn" 
           aria-label={`Add ${product.name} to cart`}
-          onClick={() => addItem(product)}
+          onClick={handleAddToCart}
         >
           Add to Cart
         </button>

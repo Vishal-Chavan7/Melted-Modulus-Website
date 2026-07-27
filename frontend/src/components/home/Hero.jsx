@@ -2,32 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   HiOutlineTruck,
-  HiOutlineCube,
   HiOutlinePaintBrush,
   HiOutlineStar,
 } from 'react-icons/hi2';
-import heroPrinter from '../../assets/images/hero/hero-printer.png';
-import heroPrints from '../../assets/images/hero/hero-prints.png';
+
+const HERO_SLIDES = [
+  '/assets/images/hero/hero-bambulab.png',
+  '/assets/images/hero/hero-prints.png',
+  '/assets/images/hero/hero-models.png',
+  '/assets/images/hero/hero-printer.png',
+  '/assets/images/hero/hero-workspace.png',
+];
 
 export const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [heroPrinter, heroPrints];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 4000);
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, []);
 
   return (
     <section className="hero" id="hero">
-      {slides.map((slide, index) => (
+      {HERO_SLIDES.map((slide, index) => (
         <div 
           key={index}
           className={`hero__bg-slide ${currentSlide === index ? 'active' : ''}`}
-          style={{ backgroundImage: `url(${slide})` }}
-        ></div>
+        >
+          <img src={slide} alt="" loading={index === 0 ? 'eager' : 'lazy'} />
+        </div>
       ))}
       <div className="hero__overlay"></div>
 
@@ -39,11 +44,6 @@ export const Hero = () => {
       </div>
 
       <div className="hero__content">
-        <div className="hero__badge">
-          <span className="hero__badge-dot"></span>
-          Precision 3D Printing
-        </div>
-
         <h1 className="hero__title">
           Where Ideas<br /><span className="highlight">Take Shape</span>
         </h1>
@@ -54,7 +54,7 @@ export const Hero = () => {
 
         <div className="hero__cta">
           <Link to="/products" className="btn btn-primary btn-lg">Explore Products</Link>
-          <Link to="/custom" className="btn btn-secondary btn-lg">Get a Custom Quote</Link>
+          <Link to="/custom#custom-form" className="btn btn-secondary btn-lg">Get a Custom Quote</Link>
         </div>
 
         <div className="hero__trust">
@@ -73,11 +73,6 @@ export const Hero = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="hero__scroll">
-        <span>Scroll</span>
-        <div className="hero__scroll-line"></div>
       </div>
     </section>
   );
