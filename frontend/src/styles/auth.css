@@ -111,6 +111,8 @@
   padding: 4px;
 }
 
+
+
 .auth-tab {
   flex: 1;
   padding: var(--space-3) var(--space-4);
@@ -890,10 +892,11 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: var(--fs-small);
 }
 
 .admin-table th {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-4);
   text-align: left;
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
