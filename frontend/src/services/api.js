@@ -25,6 +25,9 @@ export const apiRequest = async (path, options = {}) => {
   const payload = await response.json().catch(() => null);
 
   if (!response.ok || payload?.success === false) {
+    if (response.status === 401) {
+      window.dispatchEvent(new Event('auth:unauthorized'));
+    }
     const error = new Error(getErrorMessage(payload, 'Request failed. Please try again.'));
     error.status = response.status;
     throw error;

@@ -37,6 +37,15 @@ export const AuthProvider = ({ children }) => {
   });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      localStorage.removeItem(SESSION_KEY);
+      setCurrentUser(null);
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
+
   const openAuthModal = useCallback(() => setIsAuthModalOpen(true), []);
   const closeAuthModal = useCallback(() => setIsAuthModalOpen(false), []);
 
