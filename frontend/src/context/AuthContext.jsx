@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const handleUnauthorized = () => {
-      localStorage.removeItem(SESSION_KEY);
+      clearSession();
       setCurrentUser(null);
     };
     window.addEventListener('auth:unauthorized', handleUnauthorized);
@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }) => {
 
   const clearSession = () => {
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem('mm_access_token');
   };
 
   const signup = async (name, email, password, phone) => {
@@ -82,6 +83,7 @@ export const AuthProvider = ({ children }) => {
       const data = await authApi.login(email.trim().toLowerCase(), password);
       const session = normalizeUser(data.user || data);
       saveSession(session);
+      if (data.accessToken) localStorage.setItem('mm_access_token', data.accessToken);
       setCurrentUser(session);
       return { success: true, user: session };
     } catch (error) {

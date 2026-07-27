@@ -12,9 +12,14 @@ const getErrorMessage = (payload, fallback) => {
 
 export const apiRequest = async (path, options = {}) => {
   const isFormData = options.body instanceof FormData;
+  const token = localStorage.getItem('mm_access_token');
   const headers = isFormData
     ? { ...options.headers }
     : { 'Content-Type': 'application/json', ...options.headers };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     credentials: 'include',
